@@ -2,22 +2,10 @@ package com.github.ikhoury.config;
 
 import java.util.Objects;
 
-import static com.github.ikhoury.constants.RedisConfigConstants.DEFAULT_HOST;
-import static com.github.ikhoury.constants.RedisConfigConstants.DEFAULT_PORT;
-
 public class RedisConfig {
     private String host;
     private int port;
-
-    public RedisConfig() {
-        this.host = DEFAULT_HOST;
-        this.port = DEFAULT_PORT;
-    }
-
-    public RedisConfig(String host, int port) {
-        this.host = host;
-        this.port = port;
-    }
+    private int pollTimeoutInSeconds;
 
     public String getHost() {
         return host;
@@ -33,6 +21,14 @@ public class RedisConfig {
 
     public void setPort(int port) {
         this.port = port;
+    }
+
+    public int getPollTimeoutInSeconds() {
+        return pollTimeoutInSeconds;
+    }
+
+    public void setPollTimeoutInSeconds(int pollTimeoutInSeconds) {
+        this.pollTimeoutInSeconds = pollTimeoutInSeconds;
     }
 
     @Override
