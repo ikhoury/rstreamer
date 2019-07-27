@@ -13,7 +13,8 @@ import java.util.Optional;
 
 import static com.github.ikhoury.config.JedisConfigBuilder.defaultJedisConfig;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.containsInAnyOrder;
+import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.fail;
 
 public class JedisBatchPollerTest {
@@ -72,16 +73,6 @@ public class JedisBatchPollerTest {
         List<String> items = poller.pollForMultipleItemsFrom(ITEM_QUEUE, MULTIPLE_ITEMS.length);
 
         assertThat(items, containsInAnyOrder(MULTIPLE_ITEMS));
-    }
-
-    @Test
-    public void noItemsRemainInQueueAfterMultiplePoll() {
-        pushItemsToQueue(MULTIPLE_ITEMS);
-        poller.pollForMultipleItemsFrom(ITEM_QUEUE, MULTIPLE_ITEMS.length);
-
-        List<String> items = poller.pollForMultipleItemsFrom(ITEM_QUEUE, 1);
-
-        assertThat(items, is(empty()));
     }
 
     @Test
