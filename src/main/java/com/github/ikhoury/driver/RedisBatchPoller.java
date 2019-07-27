@@ -3,7 +3,7 @@ package com.github.ikhoury.driver;
 import java.util.List;
 import java.util.Optional;
 
-public interface BatchedPoller {
+public interface RedisBatchPoller {
 
     /**
      * Attempts to fetch a single item from the queue.

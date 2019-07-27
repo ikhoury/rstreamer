@@ -2,10 +2,17 @@ package com.github.ikhoury.config;
 
 import java.util.Objects;
 
-public class RedisConfig {
+public class JedisConfig {
+
     private String host;
     private int port;
     private int pollTimeoutInSeconds;
+
+    private JedisConfig(String host, int port, int pollTimeoutInSeconds) {
+        this.host = host;
+        this.port = port;
+        this.pollTimeoutInSeconds = pollTimeoutInSeconds;
+    }
 
     public String getHost() {
         return host;
@@ -43,7 +50,7 @@ public class RedisConfig {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        RedisConfig that = (RedisConfig) o;
+        JedisConfig that = (JedisConfig) o;
         return port == that.port &&
                 Objects.equals(host, that.host);
     }
