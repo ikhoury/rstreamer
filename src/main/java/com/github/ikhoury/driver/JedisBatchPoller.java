@@ -11,14 +11,14 @@ import redis.clients.jedis.Transaction;
 import java.util.List;
 import java.util.Optional;
 
-public class JedisRedisBatchPoller implements RedisBatchPoller {
+public class JedisBatchPoller implements RedisBatchPoller {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(JedisRedisBatchPoller.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(JedisBatchPoller.class);
 
     private final JedisPool jedisPool;
     private final int pollTimeoutInSeconds;
 
-    public JedisRedisBatchPoller(JedisConfig jedisConfig) {
+    public JedisBatchPoller(JedisConfig jedisConfig) {
         this.jedisPool = new JedisPool(jedisConfig.getHost(), jedisConfig.getPort());
         this.pollTimeoutInSeconds = jedisConfig.getPollTimeoutInSeconds();
     }

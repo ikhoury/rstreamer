@@ -16,9 +16,9 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.fail;
 
-public class JedisBatcherPollerTest {
+public class JedisBatchPollerTest {
 
-    private static final String ITEM_QUEUE = JedisBatcherPollerTest.class.getCanonicalName() + ":" + "items";
+    private static final String ITEM_QUEUE = JedisBatchPollerTest.class.getCanonicalName() + ":" + "items";
     private static final int POLL_TIME_IN_SECONDS = 1;
     private static final String SINGLE_ITEM = "My Item";
     private static final String[] MULTIPLE_ITEMS = new String[]{"Item 1", "Item 2", "Item 3"};
@@ -27,7 +27,7 @@ public class JedisBatcherPollerTest {
     public GenericContainer redis = new GenericContainer<>("redis:5.0.3-alpine")
             .withExposedPorts(6379);
 
-    private JedisRedisBatchPoller poller;
+    private JedisBatchPoller poller;
     private Jedis redisTestDriver;
 
     @Before
@@ -39,7 +39,7 @@ public class JedisBatcherPollerTest {
                 .withPort(port)
                 .withPollTimeoutInSeconds(POLL_TIME_IN_SECONDS)
                 .build();
-        poller = new JedisRedisBatchPoller(jedisConfig);
+        poller = new JedisBatchPoller(jedisConfig);
         redisTestDriver = new Jedis(host, port);
     }
 

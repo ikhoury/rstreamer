@@ -8,7 +8,7 @@ public class JedisConfig {
     private int port;
     private int pollTimeoutInSeconds;
 
-    private JedisConfig(String host, int port, int pollTimeoutInSeconds) {
+    JedisConfig(String host, int port, int pollTimeoutInSeconds) {
         this.host = host;
         this.port = port;
         this.pollTimeoutInSeconds = pollTimeoutInSeconds;
@@ -40,9 +40,10 @@ public class JedisConfig {
 
     @Override
     public String toString() {
-        return "RedisConfig{" +
+        return "JedisConfig{" +
                 "host='" + host + '\'' +
                 ", port=" + port +
+                ", pollTimeoutInSeconds=" + pollTimeoutInSeconds +
                 '}';
     }
 
@@ -52,11 +53,12 @@ public class JedisConfig {
         if (o == null || getClass() != o.getClass()) return false;
         JedisConfig that = (JedisConfig) o;
         return port == that.port &&
+                pollTimeoutInSeconds == that.pollTimeoutInSeconds &&
                 Objects.equals(host, that.host);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(host, port);
+        return Objects.hash(host, port, pollTimeoutInSeconds);
     }
 }
