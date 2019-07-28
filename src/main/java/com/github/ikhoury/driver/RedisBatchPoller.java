@@ -8,7 +8,7 @@ public interface RedisBatchPoller {
     /**
      * Attempts to fetch a single item from the queue.
      * @param queue The queue to poll.
-     * @return A an item if present.
+     * @return An item if present.
      */
     Optional<String> pollForSingleItemFrom(String queue);
 
