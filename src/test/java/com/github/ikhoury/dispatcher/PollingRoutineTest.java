@@ -19,19 +19,18 @@ public class PollingRoutineTest {
     private static final String ITEM_2 = "item 2";
     private static final List<String> ITEMS = asList(ITEM_1, ITEM_2);
     private static final int BATCH_SIZE = 100;
-    private static final int NUMBER_OF_SPINS = 100;
+    private static final int NUMBER_OF_SPINS = 500;
 
     private PollingRoutine routine;
-    private WorkSubscription subscription;
     private Worker singleItemWorker;
     private BatchWorker multipleItemsWorker;
     private RedisBatchPoller poller;
 
     @Before
     public void setUp() {
+        WorkSubscription subscription = mock(WorkSubscription.class);
         singleItemWorker = mock(Worker.class);
         multipleItemsWorker = mock(BatchWorker.class);
-        subscription = mock(WorkSubscription.class);
         poller = mock(RedisBatchPoller.class);
 
         when(subscription.getQueue()).thenReturn(WORK_QUEUE);
@@ -45,7 +44,6 @@ public class PollingRoutineTest {
     @Test
     public void attemptsToSinglePollOnFirstRun() {
         routine.doPoll();
-        ;
 
         verify(poller, only()).pollForSingleItemFrom(WORK_QUEUE);
     }
