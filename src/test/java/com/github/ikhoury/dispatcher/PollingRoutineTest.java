@@ -14,6 +14,7 @@ import static java.util.Arrays.asList;
 import static org.mockito.Mockito.*;
 
 public class PollingRoutineTest {
+
     private static final String WORK_QUEUE = "workQueue";
     private static final String ITEM_1 = "item 1";
     private static final String ITEM_2 = "item 2";
