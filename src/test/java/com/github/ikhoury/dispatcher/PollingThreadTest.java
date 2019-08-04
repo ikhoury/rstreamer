@@ -3,7 +3,7 @@ package com.github.ikhoury.dispatcher;
 import org.junit.Before;
 import org.junit.Test;
 
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.Assert.fail;
 import static org.mockito.Mockito.*;
 
 public class PollingThreadTest {
