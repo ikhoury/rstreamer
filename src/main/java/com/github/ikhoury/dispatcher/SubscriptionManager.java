@@ -8,9 +8,14 @@ import org.slf4j.LoggerFactory;
 import java.util.ArrayList;
 import java.util.Collection;
 
-public class JobManager {
+/**
+ * This class hold all subscriptions that need to be run for data processing.
+ * It must be instantiated once with all the subscriptions that must be activated.
+ * After activation, data will be consumed from the queue and processed by interested workers.
+ */
+public class SubscriptionManager {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(JobManager.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(SubscriptionManager.class);
     private static final int BATCH_SIZE = 100;
     private static final int THREAD_WAIT_TIME_IN_MILLIS = 5000;
 
@@ -19,7 +24,7 @@ public class JobManager {
 
     private Collection<PollingThread> pollingThreads;
 
-    public JobManager(RedisBatchPoller poller, Collection<WorkSubscription> subscriptions) {
+    public SubscriptionManager(RedisBatchPoller poller, Collection<WorkSubscription> subscriptions) {
         this.poller = poller;
         this.subscriptions = subscriptions;
         this.pollingThreads = new ArrayList<>(subscriptions.size());

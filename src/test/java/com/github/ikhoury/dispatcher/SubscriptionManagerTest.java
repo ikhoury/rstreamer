@@ -12,13 +12,13 @@ import static java.util.Collections.singleton;
 import static java.util.Collections.singletonList;
 import static org.mockito.Mockito.*;
 
-public class JobManagerTest {
+public class SubscriptionManagerTest {
 
     private static final String ITEM = "item";
     private static final String QUEUE = "queue";
     private static final int VERIFY_TIMEOUT_MILLIS = 500;
 
-    private JobManager manager;
+    private SubscriptionManager manager;
     private WorkSubscription subscription;
     private Worker worker;
     private RedisBatchPoller poller;
@@ -31,7 +31,7 @@ public class JobManagerTest {
         when(poller.pollForSingleItemFrom(QUEUE)).thenReturn(Optional.of(ITEM));
         when(poller.pollForMultipleItemsFrom(eq(QUEUE), anyInt())).thenReturn(singletonList(ITEM));
 
-        manager = new JobManager(poller, singleton(subscription));
+        manager = new SubscriptionManager(poller, singleton(subscription));
         manager.activateSubscriptions();
     }
 
