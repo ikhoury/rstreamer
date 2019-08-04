@@ -8,7 +8,7 @@ import static org.mockito.Mockito.*;
 
 public class PollingThreadTest {
 
-    private static final int WAIT_TIME_IN_MILLIS = 1000;
+    private static final int WAIT_TIME_IN_MILLIS = 500;
 
     private PollingRoutine routine;
     private PollingThread pollingThread;

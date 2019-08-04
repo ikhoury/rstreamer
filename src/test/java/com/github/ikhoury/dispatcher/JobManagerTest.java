@@ -16,6 +16,7 @@ public class JobManagerTest {
 
     private static final String ITEM = "item";
     private static final String QUEUE = "queue";
+    private static final int VERIFY_TIMEOUT_MILLIS = 500;
 
     private JobManager manager;
     private WorkSubscription subscription;
@@ -36,8 +37,8 @@ public class JobManagerTest {
 
     @Test
     public void activatesRegisteredSubscriptions() {
-        verify(poller, atLeastOnce()).pollForSingleItemFrom(QUEUE);
-        verify(worker, atLeastOnce()).processSingleItem(ITEM);
+        verify(poller, timeout(VERIFY_TIMEOUT_MILLIS).atLeastOnce()).pollForSingleItemFrom(QUEUE);
+        verify(worker, timeout(VERIFY_TIMEOUT_MILLIS).atLeastOnce()).processSingleItem(ITEM);
     }
 
     @Test
