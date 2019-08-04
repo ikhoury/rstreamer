@@ -48,7 +48,7 @@ public class SubscriptionManager {
                 LOGGER.warn("{} did not finish on time", pollingThread.getName());
             }
         });
-        pollingThreads.clear();
+        LOGGER.info("Deactivated {} subscriptions", subscriptions.size());
     }
 
     private void activateSubscription(WorkSubscription subscription) {
