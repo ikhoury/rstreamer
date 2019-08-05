@@ -1,4 +1,4 @@
-package com.github.ikhoury.dispatcher;
+package com.github.ikhoury.consumer;
 
 import com.github.ikhoury.driver.RedisBatchPoller;
 import com.github.ikhoury.worker.WorkSubscription;

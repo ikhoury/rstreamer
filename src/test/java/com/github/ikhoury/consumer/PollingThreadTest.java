@@ -1,4 +1,4 @@
-package com.github.ikhoury.dispatcher;
+package com.github.ikhoury.consumer;
 
 import org.junit.Before;
 import org.junit.Test;
