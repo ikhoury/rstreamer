@@ -4,7 +4,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.concurrent.Executor;
-import java.util.concurrent.Executors;
 
 /**
  * Runs leases asynchronously.
@@ -13,10 +12,14 @@ public class LeaseRunner {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(LeaseRunner.class);
 
-    private static final Executor EXECUTOR = Executors.newCachedThreadPool();
+    private final Executor executor;
 
-    public static void run(Lease lease) {
+    public LeaseRunner(Executor executor) {
+        this.executor = executor;
+    }
+
+    public void run(Lease lease) {
         LOGGER.info("Running lease for {}", lease.getName());
-        EXECUTOR.execute(lease.getTask());
+        executor.execute(lease.getTask());
     }
 }
