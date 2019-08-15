@@ -5,11 +5,10 @@ import org.junit.Test;
 
 import java.util.concurrent.Executors;
 
+import static com.github.ikhoury.util.TimeInterval.SHORT_MILLIS;
 import static org.mockito.Mockito.*;
 
 public class LeaseRunnerTest {
-
-    private static final int WAIT_FOR_TASK_RUN_MILLIS = 500;
 
     private LeaseRunner leaseRunner;
 
@@ -30,6 +29,6 @@ public class LeaseRunnerTest {
     public void runsLeaseTaskAsync() {
         leaseRunner.run(lease);
 
-        verify(task, timeout(WAIT_FOR_TASK_RUN_MILLIS)).run();
+        verify(task, timeout(SHORT_MILLIS)).run();
     }
 }

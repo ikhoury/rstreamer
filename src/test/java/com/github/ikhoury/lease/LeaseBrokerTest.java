@@ -7,6 +7,7 @@ import org.junit.Test;
 import java.util.Arrays;
 import java.util.concurrent.CompletableFuture;
 
+import static com.github.ikhoury.util.TimeInterval.LONG_MILLIS;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.mockito.Mockito.mock;
@@ -14,7 +15,6 @@ import static org.mockito.Mockito.mock;
 public class LeaseBrokerTest {
 
     private static final int MAX_ALLOWED_LEASES = 3;
-    private static final int TEST_TIMEOUT_MILLIS = 3000;
 
     private PollingRoutine pollingRoutine;
     private Lease lease;
@@ -29,7 +29,7 @@ public class LeaseBrokerTest {
         broker = new LeaseBroker(MAX_ALLOWED_LEASES);
     }
 
-    @Test(timeout = TEST_TIMEOUT_MILLIS)
+    @Test(timeout = LONG_MILLIS)
     public void givesOnlyMaximumAllowedNumberOfLeases() {
         int leasesOverLimit = 2;
         int totalRequiredLeases = leasesOverLimit + MAX_ALLOWED_LEASES;
@@ -50,7 +50,7 @@ public class LeaseBrokerTest {
         }
     }
 
-    @Test(timeout = TEST_TIMEOUT_MILLIS)
+    @Test(timeout = LONG_MILLIS)
     public void reusesLeaseWhenReturned() {
         // Acquire all leases
         for (int i = 0; i < MAX_ALLOWED_LEASES; i++) {

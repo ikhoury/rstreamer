@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static com.github.ikhoury.config.JedisConfigBuilder.defaultJedisConfig;
+import static com.github.ikhoury.util.TimeInterval.SHORT_SECOND;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.equalTo;
@@ -20,7 +21,6 @@ import static org.junit.Assert.fail;
 public class JedisBatchPollerTest {
 
     private static final String ITEM_QUEUE = JedisBatchPollerTest.class.getCanonicalName() + ":" + "items";
-    private static final int POLL_TIME_IN_SECONDS = 1;
     private static final String SINGLE_ITEM = "My Item";
     private static final String[] MULTIPLE_ITEMS = new String[]{"Item 1", "Item 2", "Item 3"};
 
@@ -38,7 +38,7 @@ public class JedisBatchPollerTest {
         JedisConfig jedisConfig = defaultJedisConfig()
                 .withHost(host)
                 .withPort(port)
-                .withPollTimeoutInSeconds(POLL_TIME_IN_SECONDS)
+                .withPollTimeoutInSeconds(SHORT_SECOND)
                 .build();
         poller = new JedisBatchPoller(jedisConfig);
         redisTestDriver = new Jedis(host, port);
