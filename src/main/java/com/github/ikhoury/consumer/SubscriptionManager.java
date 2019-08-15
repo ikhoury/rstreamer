@@ -1,12 +1,15 @@
 package com.github.ikhoury.consumer;
 
 import com.github.ikhoury.driver.RedisBatchPoller;
+import com.github.ikhoury.lease.LeaseBroker;
+import com.github.ikhoury.lease.LeaseRunner;
 import com.github.ikhoury.worker.WorkSubscription;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.concurrent.Executors;
 
 /**
  * This class hold all subscriptions that need to be run for data processing.
@@ -17,10 +20,11 @@ public class SubscriptionManager {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SubscriptionManager.class);
     private static final int BATCH_SIZE = 100;
-    private static final int THREAD_WAIT_TIME_IN_MILLIS = 5000;
 
     private RedisBatchPoller poller;
     private Collection<WorkSubscription> subscriptions;
+    private LeaseBroker leaseBroker;
+    private LeaseRunner leaseRunner;
 
     private Collection<PollingThread> pollingThreads;
 
@@ -28,6 +32,8 @@ public class SubscriptionManager {
         this.poller = poller;
         this.subscriptions = subscriptions;
         this.pollingThreads = new ArrayList<>(subscriptions.size());
+        this.leaseBroker = new LeaseBroker(subscriptions.size());
+        this.leaseRunner = new LeaseRunner(Executors.newCachedThreadPool());
     }
 
     public void activateSubscriptions() {
@@ -36,23 +42,13 @@ public class SubscriptionManager {
     }
 
     public void deactivateSubscriptions() {
-        pollingThreads.forEach(PollingThread::interrupt);
-        pollingThreads.forEach(pollingThread -> {
-            try {
-                pollingThread.join(THREAD_WAIT_TIME_IN_MILLIS);
-            } catch (InterruptedException e) {
-                LOGGER.error("Polling thread interrupted", e);
-            }
-
-            if (pollingThread.isAlive()) {
-                LOGGER.warn("{} did not finish on time", pollingThread.getName());
-            }
-        });
-        LOGGER.info("Deactivated {} subscriptions", subscriptions.size());
+        LOGGER.info("Deactivating {} subscriptions", subscriptions.size());
+        pollingThreads.forEach(PollingThread::stop);
     }
 
     private void activateSubscription(WorkSubscription subscription) {
-        PollingThread pollingThread = new PollingThread(new PollingRoutine(poller, subscription, BATCH_SIZE));
+        PollingRoutine routine = new PollingRoutine(poller, subscription, BATCH_SIZE);
+        PollingThread pollingThread = new PollingThread(leaseBroker, leaseRunner, routine);
         pollingThread.start();
         pollingThreads.add(pollingThread);
     }

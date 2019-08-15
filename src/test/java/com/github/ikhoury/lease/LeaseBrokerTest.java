@@ -1,5 +1,6 @@
 package com.github.ikhoury.lease;
 
+import com.github.ikhoury.consumer.PollingRoutine;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -14,12 +15,17 @@ public class LeaseBrokerTest {
 
     private static final int MAX_ALLOWED_LEASES = 3;
     private static final int TEST_TIMEOUT_MILLIS = 3000;
-    private static final Lease LEASE_TO_RETURN = mock(Lease.class);
+
+    private PollingRoutine pollingRoutine;
+    private Lease lease;
 
     private LeaseBroker broker;
 
     @Before
     public void setUp() {
+        pollingRoutine = mock(PollingRoutine.class);
+        lease = mock(Lease.class);
+
         broker = new LeaseBroker(MAX_ALLOWED_LEASES);
     }
 
@@ -30,7 +36,7 @@ public class LeaseBrokerTest {
         CompletableFuture[] threadsWithLeases = new CompletableFuture[totalRequiredLeases];
 
         for (int i = 0; i < totalRequiredLeases; i++) {
-            threadsWithLeases[i] = CompletableFuture.runAsync(this::acquireALease);
+            threadsWithLeases[i] = CompletableFuture.runAsync(() -> broker.acquireLeaseFor(pollingRoutine));
         }
 
         CompletableFuture[] expectedThreadsThatGotALease = Arrays.copyOfRange(threadsWithLeases, 0, MAX_ALLOWED_LEASES);
@@ -48,27 +54,15 @@ public class LeaseBrokerTest {
     public void reusesLeaseWhenReturned() {
         // Acquire all leases
         for (int i = 0; i < MAX_ALLOWED_LEASES; i++) {
-            acquireALease();
+            broker.acquireLeaseFor(pollingRoutine);
         }
 
         // Attempt to acquire one more lease
-        CompletableFuture oneMoreLease = CompletableFuture.runAsync(this::acquireALease);
+        CompletableFuture oneMoreLease = CompletableFuture.runAsync(() -> broker.acquireLeaseFor(pollingRoutine));
         assertThat(oneMoreLease.isDone(), equalTo(false));
 
         // Reuse returned lease
-        returnALease();
+        broker.returnLease(lease);
         oneMoreLease.join();
-    }
-
-    private void acquireALease() {
-        broker.acquireLeaseFor(this::aTask, "task");
-    }
-
-    private void returnALease() {
-        broker.returnLease(LEASE_TO_RETURN);
-    }
-
-    private void aTask() {
-        // do nothing
     }
 }

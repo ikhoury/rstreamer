@@ -1,23 +1,46 @@
 package com.github.ikhoury.consumer;
 
+import com.github.ikhoury.lease.Lease;
+import com.github.ikhoury.lease.LeaseBroker;
+import com.github.ikhoury.lease.LeaseRunner;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
  * Each {@code WorkSubscription} will have a {@code PollingThread} to service it.
- * The subscription is packaged in a {@code PollingRoutine} which is executed by this thread
- * forever until it is interrupted.
+ * The subscription is run by a {@code PollingRoutine} which is executed by this thread.
  */
-class PollingThread extends Thread {
+class PollingThread {
 
-    PollingThread(PollingRoutine routine) {
-        super(new PollingRoutineRunner(routine));
-        setName("PollingThread-" + getId());
+    private static final Logger LOGGER = LoggerFactory.getLogger(PollingThread.class);
+
+    private final LeaseBroker leaseBroker;
+    private final LeaseRunner leaseRunner;
+    private final Thread nativeThread;
+
+    PollingThread(LeaseBroker leaseBroker, LeaseRunner leaseRunner, PollingRoutine routine) {
+        this.leaseBroker = leaseBroker;
+        this.leaseRunner = leaseRunner;
+        this.nativeThread = new Thread(new PollingRoutineRunner(routine));
+
+        nativeThread.setName("PollingThread-" + nativeThread.getId());
     }
 
-    private static class PollingRoutineRunner implements Runnable {
+    void start() {
+        this.nativeThread.start();
+    }
 
-        private static final Logger LOGGER = LoggerFactory.getLogger(PollingThread.class);
+    void stop() {
+        this.nativeThread.interrupt();
+        try {
+            this.nativeThread.join();
+        } catch (InterruptedException exc) {
+            LOGGER.error("{} was interrupted", nativeThread.getName(), exc);
+            Thread.currentThread().interrupt();
+        }
+    }
+
+    private class PollingRoutineRunner implements Runnable {
 
         private final PollingRoutine routine;
 
@@ -31,7 +54,9 @@ class PollingThread extends Thread {
             LOGGER.debug("Running subscription for {}", queue);
 
             while (!Thread.interrupted()) {
-                routine.doPoll();
+                Lease lease = leaseBroker.acquireLeaseFor(routine);
+                leaseRunner.run(lease);
+                leaseBroker.returnLease(lease);
             }
 
             LOGGER.debug("Closed subscription for {}", queue);
