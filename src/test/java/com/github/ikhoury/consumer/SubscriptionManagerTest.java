@@ -8,6 +8,7 @@ import org.junit.Test;
 
 import java.util.Optional;
 
+import static com.github.ikhoury.util.TimeInterval.SHORT_MILLIS;
 import static java.util.Collections.singleton;
 import static java.util.Collections.singletonList;
 import static org.mockito.Mockito.*;
@@ -16,7 +17,6 @@ public class SubscriptionManagerTest {
 
     private static final String ITEM = "item";
     private static final String QUEUE = "queue";
-    private static final int VERIFY_TIMEOUT_MILLIS = 500;
 
     private SubscriptionManager manager;
     private WorkSubscription subscription;
@@ -37,8 +37,8 @@ public class SubscriptionManagerTest {
 
     @Test
     public void activatesRegisteredSubscriptions() {
-        verify(poller, timeout(VERIFY_TIMEOUT_MILLIS).atLeastOnce()).pollForSingleItemFrom(QUEUE);
-        verify(worker, timeout(VERIFY_TIMEOUT_MILLIS).atLeastOnce()).processSingleItem(ITEM);
+        verify(poller, timeout(SHORT_MILLIS).atLeastOnce()).pollForSingleItemFrom(QUEUE);
+        verify(worker, timeout(SHORT_MILLIS).atLeastOnce()).processSingleItem(ITEM);
     }
 
     @Test

@@ -16,7 +16,7 @@ import static com.github.ikhoury.util.RandomOutcome.randomBooleanOutcome;
  * to increase throughput. If there are not enough items in the queue to justify the heavy continuous batch polling,
  * the routine switches back to single polling.
  */
-class PollingRoutine {
+public class PollingRoutine {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(PollingRoutine.class);
     private static final int MINIMUM_BATCH_SIZE = 10;
@@ -33,7 +33,7 @@ class PollingRoutine {
         this.batchSize = batchSize;
     }
 
-    void doPoll() {
+    public void doPoll() {
         String queue = subscription.getQueue();
 
         if (shouldBatchPoll) {
@@ -46,7 +46,7 @@ class PollingRoutine {
         }
     }
 
-    String getWorkQueue() {
+    public String getWorkQueue() {
         return subscription.getQueue();
     }
 
