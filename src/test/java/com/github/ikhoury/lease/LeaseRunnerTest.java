@@ -36,7 +36,7 @@ public class LeaseRunnerTest {
 
     @Test
     public void returnsLeaseIfExceptionThrown() {
-        doThrow(RuntimeException.class).when(lease).getTask();
+        when(lease.getTask()).thenThrow(RuntimeException.class);
 
         leaseRunner.run(lease);
 
