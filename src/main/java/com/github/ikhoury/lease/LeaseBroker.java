@@ -35,7 +35,7 @@ public class LeaseBroker {
         return new Lease(name, routine::doPoll);
     }
 
-    public void returnLease(Lease lease) {
+    void returnLease(Lease lease) {
         leaseStore.release();
         LOGGER.info("Released a lease for {}", lease.getName());
     }

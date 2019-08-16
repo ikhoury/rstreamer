@@ -33,20 +33,13 @@ public class PollingThreadTest {
 
     @Test
     public void onlyRunsRoutineWhenStarted() {
+        verifyZeroInteractions(leaseRunner);
+
         pollingThread.start();
         verify(leaseRunner, timeout(SHORT_MILLIS).atLeast(NUMBER_OF_RUNS_TO_CHECK)).run(lease);
 
         pollingThread.stop();
         reset(leaseRunner);
         verifyZeroInteractions(leaseRunner);
-    }
-
-    @Test
-    public void returnsLeaseAfterRunningRoutine() {
-        pollingThread.start();
-        verify(leaseRunner, timeout(SHORT_MILLIS).atLeast(NUMBER_OF_RUNS_TO_CHECK)).run(lease);
-
-        pollingThread.stop();
-        verify(leaseBroker, atLeast(NUMBER_OF_RUNS_TO_CHECK)).returnLease(lease);
     }
 }

@@ -56,7 +56,6 @@ class PollingThread {
             while (!Thread.interrupted()) {
                 Lease lease = leaseBroker.acquireLeaseFor(routine);
                 leaseRunner.run(lease);
-                leaseBroker.returnLease(lease);
             }
 
             LOGGER.debug("Closed subscription for {}", queue);

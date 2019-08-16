@@ -9,7 +9,8 @@ import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.concurrent.Executors;
+
+import static java.util.concurrent.Executors.newCachedThreadPool;
 
 /**
  * This class hold all subscriptions that need to be run for data processing.
@@ -33,7 +34,7 @@ public class SubscriptionManager {
         this.subscriptions = subscriptions;
         this.pollingThreads = new ArrayList<>(subscriptions.size());
         this.leaseBroker = new LeaseBroker(subscriptions.size());
-        this.leaseRunner = new LeaseRunner(Executors.newCachedThreadPool());
+        this.leaseRunner = new LeaseRunner(leaseBroker, newCachedThreadPool());
     }
 
     public void activateSubscriptions() {
