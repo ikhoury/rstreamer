@@ -18,24 +18,12 @@ public class JedisConfig {
         return host;
     }
 
-    public void setHost(String host) {
-        this.host = host;
-    }
-
     public int getPort() {
         return port;
     }
 
-    public void setPort(int port) {
-        this.port = port;
-    }
-
     public int getPollTimeoutInSeconds() {
         return pollTimeoutInSeconds;
-    }
-
-    public void setPollTimeoutInSeconds(int pollTimeoutInSeconds) {
-        this.pollTimeoutInSeconds = pollTimeoutInSeconds;
     }
 
     @Override
