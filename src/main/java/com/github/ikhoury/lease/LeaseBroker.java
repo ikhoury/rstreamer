@@ -1,5 +1,6 @@
 package com.github.ikhoury.lease;
 
+import com.github.ikhoury.config.LeaseConfig;
 import com.github.ikhoury.consumer.PollingRoutine;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,8 +16,10 @@ public class LeaseBroker {
     private static final Logger LOGGER = LoggerFactory.getLogger(LeaseBroker.class);
 
     private final Semaphore leaseStore;
+    private final int maxActiveLeases;
 
-    public LeaseBroker(int maxActiveLeases) {
+    public LeaseBroker(LeaseConfig leaseConfig) {
+        this.maxActiveLeases = leaseConfig.getMaxActiveLeases();
         this.leaseStore = new Semaphore(maxActiveLeases);
     }
 
@@ -31,12 +34,20 @@ public class LeaseBroker {
         leaseStore.acquireUninterruptibly();
 
         String name = routine.getWorkQueue();
-        LOGGER.info("Acquired a lease for {}, {} estimated lease(s) left", routine.getWorkQueue(), leaseStore.availablePermits());
+        LOGGER.info("Acquired a lease for {}, {} estimated lease(s) left", routine.getWorkQueue(), availableLeaseCount());
         return new Lease(name, routine::doPoll);
     }
 
     void returnLease(Lease lease) {
         leaseStore.release();
         LOGGER.info("Released a lease for {}", lease.getName());
+    }
+
+    int activeLeaseCount() {
+        return maxActiveLeases - leaseStore.availablePermits();
+    }
+
+    int availableLeaseCount() {
+        return leaseStore.availablePermits();
     }
 }

@@ -1,5 +1,7 @@
 package com.github.ikhoury.consumer;
 
+import com.github.ikhoury.config.PollingConfig;
+import com.github.ikhoury.config.RStreamerConfig;
 import com.github.ikhoury.driver.RedisBatchPoller;
 import com.github.ikhoury.lease.LeaseBroker;
 import com.github.ikhoury.lease.LeaseRunner;
@@ -20,21 +22,30 @@ import static java.util.concurrent.Executors.newCachedThreadPool;
 public class SubscriptionManager {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SubscriptionManager.class);
-    private static final int BATCH_SIZE = 100;
 
     private RedisBatchPoller poller;
-    private Collection<WorkSubscription> subscriptions;
     private LeaseBroker leaseBroker;
     private LeaseRunner leaseRunner;
+    private PollingConfig pollingConfig;
 
+    private Collection<WorkSubscription> subscriptions;
     private Collection<PollingThread> pollingThreads;
 
-    public SubscriptionManager(RedisBatchPoller poller, Collection<WorkSubscription> subscriptions) {
+    public SubscriptionManager(RStreamerConfig rStreamerConfig, RedisBatchPoller poller) {
+        this.pollingThreads = new ArrayList<>();
+        this.subscriptions = new ArrayList<>();
         this.poller = poller;
-        this.subscriptions = subscriptions;
-        this.pollingThreads = new ArrayList<>(subscriptions.size());
-        this.leaseBroker = new LeaseBroker(subscriptions.size());
+        this.pollingConfig = rStreamerConfig.getPollingConfig();
+        this.leaseBroker = new LeaseBroker(rStreamerConfig.getLeaseConfig());
         this.leaseRunner = new LeaseRunner(leaseBroker, newCachedThreadPool());
+    }
+
+    public void addSubscription(WorkSubscription subscription) {
+        this.subscriptions.add(subscription);
+    }
+
+    public void addSubscriptions(Collection<WorkSubscription> subscriptions) {
+        this.subscriptions.addAll(subscriptions);
     }
 
     public void activateSubscriptions() {
@@ -48,7 +59,7 @@ public class SubscriptionManager {
     }
 
     private void activateSubscription(WorkSubscription subscription) {
-        PollingRoutine routine = new PollingRoutine(poller, subscription, BATCH_SIZE);
+        PollingRoutine routine = new PollingRoutine(pollingConfig, poller, subscription);
         PollingThread pollingThread = new PollingThread(leaseBroker, leaseRunner, routine);
         pollingThread.start();
         pollingThreads.add(pollingThread);

@@ -1,5 +1,6 @@
 package com.github.ikhoury.consumer;
 
+import com.github.ikhoury.config.RStreamerConfig;
 import com.github.ikhoury.driver.RedisBatchPoller;
 import com.github.ikhoury.worker.WorkSubscription;
 import com.github.ikhoury.worker.Worker;
@@ -8,6 +9,7 @@ import org.junit.Test;
 
 import java.util.Optional;
 
+import static com.github.ikhoury.config.RStreamerConfigBuilder.defaultRStreamerConfig;
 import static com.github.ikhoury.util.TimeInterval.SHORT_MILLIS;
 import static java.util.Collections.singleton;
 import static java.util.Collections.singletonList;
@@ -19,19 +21,21 @@ public class SubscriptionManagerTest {
     private static final String QUEUE = "queue";
 
     private SubscriptionManager manager;
-    private WorkSubscription subscription;
     private Worker worker;
     private RedisBatchPoller poller;
 
     @Before
     public void setUp() {
         worker = mock(Worker.class);
-        subscription = new WorkSubscription(QUEUE, singleton(worker));
         poller = mock(RedisBatchPoller.class);
+        RStreamerConfig config = defaultRStreamerConfig().build();
+        WorkSubscription subscription = new WorkSubscription(QUEUE, singleton(worker));
+
         when(poller.pollForSingleItemFrom(QUEUE)).thenReturn(Optional.of(ITEM));
         when(poller.pollForMultipleItemsFrom(eq(QUEUE), anyInt())).thenReturn(singletonList(ITEM));
 
-        manager = new SubscriptionManager(poller, singleton(subscription));
+        manager = new SubscriptionManager(config, poller);
+        manager.addSubscription(subscription);
         manager.activateSubscriptions();
     }
 

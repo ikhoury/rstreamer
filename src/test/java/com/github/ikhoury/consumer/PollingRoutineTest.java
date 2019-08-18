@@ -1,5 +1,6 @@
 package com.github.ikhoury.consumer;
 
+import com.github.ikhoury.config.PollingConfig;
 import com.github.ikhoury.driver.RedisBatchPoller;
 import com.github.ikhoury.worker.BatchWorker;
 import com.github.ikhoury.worker.WorkSubscription;
@@ -29,17 +30,19 @@ public class PollingRoutineTest {
 
     @Before
     public void setUp() {
-        WorkSubscription subscription = mock(WorkSubscription.class);
         singleItemWorker = mock(Worker.class);
         multipleItemsWorker = mock(BatchWorker.class);
         poller = mock(RedisBatchPoller.class);
+        WorkSubscription subscription = mock(WorkSubscription.class);
+        PollingConfig pollingConfig = mock(PollingConfig.class);
 
         when(subscription.getQueue()).thenReturn(WORK_QUEUE);
         when(subscription.getWorkers()).thenReturn(asList(singleItemWorker, multipleItemsWorker));
+        when(pollingConfig.getBatchSize()).thenReturn(BATCH_SIZE);
         when(poller.pollForSingleItemFrom(WORK_QUEUE)).thenReturn(Optional.of(ITEM_1));
         when(poller.pollForMultipleItemsFrom(WORK_QUEUE, BATCH_SIZE)).thenReturn(ITEMS);
 
-        routine = new PollingRoutine(poller, subscription, BATCH_SIZE);
+        routine = new PollingRoutine(pollingConfig, poller, subscription);
     }
 
     @Test

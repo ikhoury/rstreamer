@@ -1,5 +1,6 @@
 package com.github.ikhoury.consumer;
 
+import com.github.ikhoury.config.PollingConfig;
 import com.github.ikhoury.driver.RedisBatchPoller;
 import com.github.ikhoury.worker.BatchWorker;
 import com.github.ikhoury.worker.WorkSubscription;
@@ -19,18 +20,19 @@ import static com.github.ikhoury.util.RandomOutcome.randomBooleanOutcome;
 public class PollingRoutine {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(PollingRoutine.class);
-    private static final int MINIMUM_BATCH_SIZE = 10;
 
     private final RedisBatchPoller poller;
     private final WorkSubscription subscription;
     private final int batchSize;
+    private final int batchSizeThreshold;
 
     private boolean shouldBatchPoll;
 
-    PollingRoutine(RedisBatchPoller poller, WorkSubscription subscription, int batchSize) {
+    PollingRoutine(PollingConfig pollingConfig, RedisBatchPoller poller, WorkSubscription subscription) {
+        this.batchSize = pollingConfig.getBatchSize();
+        this.batchSizeThreshold = pollingConfig.getBatchSizeThreshold();
         this.subscription = subscription;
         this.poller = poller;
-        this.batchSize = batchSize;
     }
 
     public void doPoll() {
@@ -70,7 +72,7 @@ public class PollingRoutine {
     }
 
     private boolean shouldBatchPollBasedOnSizeOf(List<String> items) {
-        return !(items.size() < MINIMUM_BATCH_SIZE);
+        return !(items.size() < batchSizeThreshold);
     }
 
     private boolean shouldBatchPollBasedOnRandomOutcome() {
