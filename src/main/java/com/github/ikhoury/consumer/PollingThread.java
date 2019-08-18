@@ -34,8 +34,9 @@ class PollingThread {
         this.nativeThread.interrupt();
         try {
             this.nativeThread.join();
+            this.leaseRunner.shutdown();
         } catch (InterruptedException exc) {
-            LOGGER.error("{} was interrupted", nativeThread.getName(), exc);
+            LOGGER.error("{} was interrupted and failed to shutdown gracefully", nativeThread.getName(), exc);
             Thread.currentThread().interrupt();
         }
     }

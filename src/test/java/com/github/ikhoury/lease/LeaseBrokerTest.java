@@ -1,5 +1,6 @@
 package com.github.ikhoury.lease;
 
+import com.github.ikhoury.config.LeaseConfig;
 import com.github.ikhoury.consumer.PollingRoutine;
 import org.junit.Before;
 import org.junit.Test;
@@ -11,6 +12,7 @@ import static com.github.ikhoury.util.TimeInterval.LONG_MILLIS;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 public class LeaseBrokerTest {
 
@@ -25,8 +27,11 @@ public class LeaseBrokerTest {
     public void setUp() {
         pollingRoutine = mock(PollingRoutine.class);
         lease = mock(Lease.class);
+        LeaseConfig leaseConfig = mock(LeaseConfig.class);
 
-        broker = new LeaseBroker(MAX_ALLOWED_LEASES);
+        when(leaseConfig.getMaxActiveLeases()).thenReturn(MAX_ALLOWED_LEASES);
+
+        broker = new LeaseBroker(leaseConfig);
     }
 
     @Test(timeout = LONG_MILLIS)
@@ -64,5 +69,19 @@ public class LeaseBrokerTest {
         // Reuse returned lease
         broker.returnLease(lease);
         oneMoreLease.join();
+    }
+
+    @Test
+    public void returnsCapacityStatistics() {
+        assertThat(broker.activeLeaseCount(), equalTo(0));
+        assertThat(broker.availableLeaseCount(), equalTo(MAX_ALLOWED_LEASES));
+
+        broker.acquireLeaseFor(pollingRoutine);
+        assertThat(broker.activeLeaseCount(), equalTo(1));
+        assertThat(broker.availableLeaseCount(), equalTo(MAX_ALLOWED_LEASES - 1));
+
+        broker.returnLease(lease);
+        assertThat(broker.activeLeaseCount(), equalTo(0));
+        assertThat(broker.availableLeaseCount(), equalTo(MAX_ALLOWED_LEASES));
     }
 }
