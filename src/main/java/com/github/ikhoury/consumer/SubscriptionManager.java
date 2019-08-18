@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 
 import static java.util.concurrent.Executors.newFixedThreadPool;
@@ -55,7 +56,11 @@ public class SubscriptionManager {
 
     public void deactivateSubscriptions() {
         LOGGER.info("Deactivating {} subscriptions", subscriptions.size());
-        pollingThreads.forEach(PollingThread::stop);
+        CompletableFuture[] deactivationTasks = pollingThreads.stream()
+                .map(pollingThread -> CompletableFuture.runAsync(pollingThread::stop))
+                .toArray(CompletableFuture[]::new);
+
+        CompletableFuture.allOf(deactivationTasks).join();
     }
 
     private void activateSubscription(WorkSubscription subscription) {

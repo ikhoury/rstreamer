@@ -41,7 +41,7 @@ public class LeaseRunner {
 
         try {
             do {
-                LOGGER.info("Waiting for {} task(s) to complete", leaseBroker.activeLeaseCount());
+                LOGGER.debug("Waiting for {} task(s) to complete", leaseBroker.activeLeaseCount());
                 isTerminated = executor.awaitTermination(SHUTDOWN_WAIT_SECONDS, TimeUnit.SECONDS);
             } while (!isTerminated);
         } catch (InterruptedException e) {
