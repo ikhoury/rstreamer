@@ -1,5 +1,6 @@
 package com.github.ikhoury.consumer;
 
+import com.github.ikhoury.config.LeaseConfig;
 import com.github.ikhoury.config.PollingConfig;
 import com.github.ikhoury.config.SubscriptionManagerConfig;
 import com.github.ikhoury.driver.RedisBatchPoller;
@@ -11,8 +12,9 @@ import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.concurrent.ExecutorService;
 
-import static java.util.concurrent.Executors.newCachedThreadPool;
+import static java.util.concurrent.Executors.newFixedThreadPool;
 
 /**
  * This class hold all subscriptions that need to be run for data processing.
@@ -24,9 +26,8 @@ public class SubscriptionManager {
     private static final Logger LOGGER = LoggerFactory.getLogger(SubscriptionManager.class);
 
     private RedisBatchPoller poller;
-    private LeaseBroker leaseBroker;
-    private LeaseRunner leaseRunner;
     private PollingConfig pollingConfig;
+    private LeaseConfig leaseConfig;
 
     private Collection<WorkSubscription> subscriptions;
     private Collection<PollingThread> pollingThreads;
@@ -36,8 +37,7 @@ public class SubscriptionManager {
         this.subscriptions = new ArrayList<>();
         this.poller = poller;
         this.pollingConfig = config.getPollingConfig();
-        this.leaseBroker = new LeaseBroker(config.getLeaseConfig());
-        this.leaseRunner = new LeaseRunner(leaseBroker, newCachedThreadPool());
+        this.leaseConfig = config.getLeaseConfig();
     }
 
     public void addSubscription(WorkSubscription subscription) {
@@ -59,9 +59,14 @@ public class SubscriptionManager {
     }
 
     private void activateSubscription(WorkSubscription subscription) {
+        ExecutorService executorService = newFixedThreadPool(leaseConfig.getMaxActiveLeases());
+        LeaseBroker leaseBroker = new LeaseBroker(leaseConfig);
+        LeaseRunner leaseRunner = new LeaseRunner(leaseBroker, executorService);
+
         PollingRoutine routine = new PollingRoutine(pollingConfig, poller, subscription);
         PollingThread pollingThread = new PollingThread(leaseBroker, leaseRunner, routine);
         pollingThread.start();
+
         pollingThreads.add(pollingThread);
     }
 }
