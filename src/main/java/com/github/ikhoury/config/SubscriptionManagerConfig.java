@@ -1,19 +1,13 @@
 package com.github.ikhoury.config;
 
-public class RStreamerConfig {
+public class SubscriptionManagerConfig {
 
-    private JedisConfig jedisConfig;
     private LeaseConfig leaseConfig;
     private PollingConfig pollingConfig;
 
-    RStreamerConfig(JedisConfig jedisConfig, LeaseConfig leaseConfig, PollingConfig pollingConfig) {
-        this.jedisConfig = jedisConfig;
+    SubscriptionManagerConfig(LeaseConfig leaseConfig, PollingConfig pollingConfig) {
         this.leaseConfig = leaseConfig;
         this.pollingConfig = pollingConfig;
-    }
-
-    public JedisConfig getJedisConfig() {
-        return jedisConfig;
     }
 
     public LeaseConfig getLeaseConfig() {

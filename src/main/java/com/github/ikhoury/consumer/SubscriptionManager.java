@@ -1,7 +1,7 @@
 package com.github.ikhoury.consumer;
 
 import com.github.ikhoury.config.PollingConfig;
-import com.github.ikhoury.config.RStreamerConfig;
+import com.github.ikhoury.config.SubscriptionManagerConfig;
 import com.github.ikhoury.driver.RedisBatchPoller;
 import com.github.ikhoury.lease.LeaseBroker;
 import com.github.ikhoury.lease.LeaseRunner;
@@ -31,12 +31,12 @@ public class SubscriptionManager {
     private Collection<WorkSubscription> subscriptions;
     private Collection<PollingThread> pollingThreads;
 
-    public SubscriptionManager(RStreamerConfig rStreamerConfig, RedisBatchPoller poller) {
+    public SubscriptionManager(SubscriptionManagerConfig config, RedisBatchPoller poller) {
         this.pollingThreads = new ArrayList<>();
         this.subscriptions = new ArrayList<>();
         this.poller = poller;
-        this.pollingConfig = rStreamerConfig.getPollingConfig();
-        this.leaseBroker = new LeaseBroker(rStreamerConfig.getLeaseConfig());
+        this.pollingConfig = config.getPollingConfig();
+        this.leaseBroker = new LeaseBroker(config.getLeaseConfig());
         this.leaseRunner = new LeaseRunner(leaseBroker, newCachedThreadPool());
     }
 
