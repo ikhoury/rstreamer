@@ -12,7 +12,7 @@ import java.util.concurrent.TimeUnit;
 public class LeaseRunner {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(LeaseRunner.class);
-    private static final int SHUTDOWN_WAIT_SECONDS = 3;
+    private static final int SHUTDOWN_WAIT_SECONDS = 10;
 
     private final ExecutorService executor;
     private final LeaseBroker leaseBroker;

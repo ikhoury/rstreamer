@@ -45,6 +45,8 @@ public class JedisBatchPoller implements RedisBatchPoller {
             Response<List<String>> items = transaction.lrange(queue, 0, count - 1);
             transaction.ltrim(queue, count, -1);
             transaction.exec();
+
+            LOGGER.info("Polled {} items from {}", items.get().size(), queue);
             return items.get();
         }
     }
