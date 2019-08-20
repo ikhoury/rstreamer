@@ -2,14 +2,14 @@ package com.github.ikhoury.consumer;
 
 import com.github.ikhoury.config.PollingConfig;
 import com.github.ikhoury.driver.RedisBatchPoller;
-import com.github.ikhoury.worker.BatchWorker;
-import com.github.ikhoury.worker.WorkSubscription;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Collections;
 import java.util.List;
 
 import static com.github.ikhoury.util.RandomOutcome.randomBooleanOutcome;
+import static java.util.Collections.emptyList;
 
 /**
  * This routine fetches work items from a queue and processes it
@@ -22,53 +22,32 @@ public class PollingRoutine {
     private static final Logger LOGGER = LoggerFactory.getLogger(PollingRoutine.class);
 
     private final RedisBatchPoller poller;
-    private final WorkSubscription subscription;
+    private final String workQueue;
     private final int batchSize;
     private final int batchSizeThreshold;
 
     private boolean shouldBatchPoll;
 
-    PollingRoutine(PollingConfig pollingConfig, RedisBatchPoller poller, WorkSubscription subscription) {
+    PollingRoutine(PollingConfig pollingConfig, RedisBatchPoller poller, String workQueue) {
         this.batchSize = pollingConfig.getBatchSize();
         this.batchSizeThreshold = pollingConfig.getBatchSizeThreshold();
-        this.subscription = subscription;
+        this.workQueue = workQueue;
         this.poller = poller;
     }
 
-    public void doPoll() {
-        String queue = subscription.getQueue();
-
+    List<String> doPoll() {
         if (shouldBatchPoll) {
-            List<String> items = poller.pollForMultipleItemsFrom(queue, batchSize);
-            processMultipleItems(items);
+            List<String> items = poller.pollForMultipleItemsFrom(workQueue, batchSize);
+            LOGGER.trace("Batch polled on {} for {} and got {}", workQueue, batchSize, items.size());
             shouldBatchPoll = shouldBatchPollBasedOnSizeOf(items);
+            return items;
         } else {
-            poller.pollForSingleItemFrom(queue).ifPresent(this::processSingleItem);
             shouldBatchPoll = shouldBatchPollBasedOnRandomOutcome();
+            LOGGER.trace("Single polling on {}", workQueue);
+            return poller.pollForSingleItemFrom(workQueue)
+                    .map(Collections::singletonList)
+                    .orElse(emptyList());
         }
-    }
-
-    public String getWorkQueue() {
-        return subscription.getQueue();
-    }
-
-    private void processSingleItem(String item) {
-        subscription.getWorkers().forEach(worker -> {
-            LOGGER.trace("Worker {} processing single item", worker.getClass().getCanonicalName());
-            worker.processSingleItem(item);
-        });
-    }
-
-    private void processMultipleItems(List<String> items) {
-        subscription.getWorkers().forEach(worker -> {
-            if (worker instanceof BatchWorker) {
-                LOGGER.trace("Worker {} processing {} items", worker.getClass().getCanonicalName(), items.size());
-                ((BatchWorker) worker).processMultipleItems(items);
-            } else {
-                LOGGER.trace("Worker {} processing single item", worker.getClass().getCanonicalName());
-                items.forEach(worker::processSingleItem);
-            }
-        });
     }
 
     private boolean shouldBatchPollBasedOnSizeOf(List<String> items) {

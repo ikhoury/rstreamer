@@ -1,7 +1,6 @@
 package com.github.ikhoury.lease;
 
 import com.github.ikhoury.config.LeaseConfig;
-import com.github.ikhoury.consumer.PollingRoutine;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -27,15 +26,14 @@ public class LeaseBroker {
      * This method guarantees that the caller will return with a lease.
      * If no lease is available then the caller will wait indefinitely for one.
      *
-     * @param routine The routine that will be run by the LeaseRunner
+     * @param name Description for the lease
      * @return A Lease for the task
      */
-    public Lease acquireLeaseFor(PollingRoutine routine) {
+    public Lease acquireLeaseFor(String name) {
         leaseStore.acquireUninterruptibly();
 
-        String name = routine.getWorkQueue();
-        LOGGER.info("Acquired a lease for {}, {} estimated lease(s) left", routine.getWorkQueue(), availableLeaseCount());
-        return new Lease(name, routine::doPoll);
+        LOGGER.info("Acquired a lease for {}, {} estimated lease(s) left", name, availableLeaseCount());
+        return new Lease(name);
     }
 
     void returnLease(Lease lease) {

@@ -1,11 +1,9 @@
 package com.github.ikhoury.lease;
 
 import com.github.ikhoury.config.LeaseConfig;
-import com.github.ikhoury.consumer.PollingRoutine;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.util.Arrays;
 import java.util.concurrent.CompletableFuture;
 
 import static com.github.ikhoury.util.TimeInterval.LONG_MILLIS;
@@ -18,14 +16,11 @@ public class LeaseBrokerTest {
 
     private static final int MAX_ALLOWED_LEASES = 3;
 
-    private PollingRoutine pollingRoutine;
     private Lease lease;
-
     private LeaseBroker broker;
 
     @Before
     public void setUp() {
-        pollingRoutine = mock(PollingRoutine.class);
         lease = mock(Lease.class);
         LeaseConfig leaseConfig = mock(LeaseConfig.class);
 
@@ -37,20 +32,19 @@ public class LeaseBrokerTest {
     @Test(timeout = LONG_MILLIS)
     public void givesOnlyMaximumAllowedNumberOfLeases() {
         int leasesOverLimit = 2;
-        int totalRequiredLeases = leasesOverLimit + MAX_ALLOWED_LEASES;
-        CompletableFuture[] threadsWithLeases = new CompletableFuture[totalRequiredLeases];
+        CompletableFuture[] extraLeases = new CompletableFuture[leasesOverLimit];
 
-        for (int i = 0; i < totalRequiredLeases; i++) {
-            threadsWithLeases[i] = CompletableFuture.runAsync(() -> broker.acquireLeaseFor(pollingRoutine));
+        for (int i = 0; i < MAX_ALLOWED_LEASES; i++) {
+            broker.acquireLeaseFor("name");
         }
 
-        CompletableFuture[] expectedThreadsThatGotALease = Arrays.copyOfRange(threadsWithLeases, 0, MAX_ALLOWED_LEASES);
-        CompletableFuture[] expectedThreadsThatAreWaitingForALease = Arrays.copyOfRange(threadsWithLeases, MAX_ALLOWED_LEASES, totalRequiredLeases);
-
-        for (CompletableFuture future : expectedThreadsThatGotALease) {
-            future.join();
+        for (int i = 0; i < leasesOverLimit; i++) {
+            extraLeases[i] = CompletableFuture.runAsync(() -> broker.acquireLeaseFor("name"));
         }
-        for (CompletableFuture future : expectedThreadsThatAreWaitingForALease) {
+
+        assertThat(broker.activeLeaseCount(), equalTo(MAX_ALLOWED_LEASES));
+        assertThat(broker.availableLeaseCount(), equalTo(0));
+        for (CompletableFuture future : extraLeases) {
             assertThat(future.isDone(), equalTo(false));
         }
     }
@@ -59,11 +53,11 @@ public class LeaseBrokerTest {
     public void reusesLeaseWhenReturned() {
         // Acquire all leases
         for (int i = 0; i < MAX_ALLOWED_LEASES; i++) {
-            broker.acquireLeaseFor(pollingRoutine);
+            broker.acquireLeaseFor("name");
         }
 
         // Attempt to acquire one more lease
-        CompletableFuture oneMoreLease = CompletableFuture.runAsync(() -> broker.acquireLeaseFor(pollingRoutine));
+        CompletableFuture oneMoreLease = CompletableFuture.runAsync(() -> broker.acquireLeaseFor("name"));
         assertThat(oneMoreLease.isDone(), equalTo(false));
 
         // Reuse returned lease
@@ -76,7 +70,7 @@ public class LeaseBrokerTest {
         assertThat(broker.activeLeaseCount(), equalTo(0));
         assertThat(broker.availableLeaseCount(), equalTo(MAX_ALLOWED_LEASES));
 
-        broker.acquireLeaseFor(pollingRoutine);
+        broker.acquireLeaseFor("name");
         assertThat(broker.activeLeaseCount(), equalTo(1));
         assertThat(broker.availableLeaseCount(), equalTo(MAX_ALLOWED_LEASES - 1));
 
