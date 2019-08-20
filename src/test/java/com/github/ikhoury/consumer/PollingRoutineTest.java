@@ -2,9 +2,6 @@ package com.github.ikhoury.consumer;
 
 import com.github.ikhoury.config.PollingConfig;
 import com.github.ikhoury.driver.RedisBatchPoller;
-import com.github.ikhoury.worker.BatchWorker;
-import com.github.ikhoury.worker.WorkSubscription;
-import com.github.ikhoury.worker.Worker;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -12,6 +9,8 @@ import java.util.List;
 import java.util.Optional;
 
 import static java.util.Arrays.asList;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.contains;
 import static org.mockito.Mockito.*;
 
 public class PollingRoutineTest {
@@ -24,32 +23,26 @@ public class PollingRoutineTest {
     private static final int NUMBER_OF_SPINS = 500;
 
     private PollingRoutine routine;
-    private Worker singleItemWorker;
-    private BatchWorker multipleItemsWorker;
     private RedisBatchPoller poller;
 
     @Before
     public void setUp() {
-        singleItemWorker = mock(Worker.class);
-        multipleItemsWorker = mock(BatchWorker.class);
         poller = mock(RedisBatchPoller.class);
-        WorkSubscription subscription = mock(WorkSubscription.class);
         PollingConfig pollingConfig = mock(PollingConfig.class);
 
-        when(subscription.getQueue()).thenReturn(WORK_QUEUE);
-        when(subscription.getWorkers()).thenReturn(asList(singleItemWorker, multipleItemsWorker));
         when(pollingConfig.getBatchSize()).thenReturn(BATCH_SIZE);
         when(poller.pollForSingleItemFrom(WORK_QUEUE)).thenReturn(Optional.of(ITEM_1));
         when(poller.pollForMultipleItemsFrom(WORK_QUEUE, BATCH_SIZE)).thenReturn(ITEMS);
 
-        routine = new PollingRoutine(pollingConfig, poller, subscription);
+        routine = new PollingRoutine(pollingConfig, poller, WORK_QUEUE);
     }
 
     @Test
     public void attemptsToSinglePollOnFirstRun() {
-        routine.doPoll();
+        List<String> items = routine.doPoll();
 
         verify(poller, only()).pollForSingleItemFrom(WORK_QUEUE);
+        assertThat(items, contains(ITEM_1));
     }
 
     @Test
@@ -57,23 +50,6 @@ public class PollingRoutineTest {
         attemptBatchPoll();
 
         verify(poller, atLeastOnce()).pollForMultipleItemsFrom(WORK_QUEUE, BATCH_SIZE);
-    }
-
-    @Test
-    public void invokesWorkersToProcessSingleItem() {
-        routine.doPoll();
-
-        verify(singleItemWorker, only()).processSingleItem(ITEM_1);
-        verify(multipleItemsWorker, only()).processSingleItem(ITEM_1);
-    }
-
-    @Test
-    public void invokesWorkersToProcessMultipleItems() {
-        attemptBatchPoll();
-
-        verify(singleItemWorker, atLeastOnce()).processSingleItem(ITEM_1);
-        verify(singleItemWorker, atLeastOnce()).processSingleItem(ITEM_2);
-        verify(multipleItemsWorker, atLeastOnce()).processMultipleItems(ITEMS);
     }
 
     private void attemptBatchPoll() {

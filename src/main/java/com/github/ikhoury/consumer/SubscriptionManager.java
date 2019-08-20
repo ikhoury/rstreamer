@@ -31,10 +31,10 @@ public class SubscriptionManager {
     private LeaseConfig leaseConfig;
 
     private Collection<WorkSubscription> subscriptions;
-    private Collection<PollingThread> pollingThreads;
+    private Collection<SubscriptionRunner> subscriptionRunners;
 
     public SubscriptionManager(SubscriptionManagerConfig config, RedisBatchPoller poller) {
-        this.pollingThreads = new ArrayList<>();
+        this.subscriptionRunners = new ArrayList<>();
         this.subscriptions = new ArrayList<>();
         this.poller = poller;
         this.pollingConfig = config.getPollingConfig();
@@ -56,8 +56,8 @@ public class SubscriptionManager {
 
     public void deactivateSubscriptions() {
         LOGGER.info("Deactivating {} subscriptions", subscriptions.size());
-        CompletableFuture[] deactivationTasks = pollingThreads.stream()
-                .map(pollingThread -> CompletableFuture.runAsync(pollingThread::stop))
+        CompletableFuture[] deactivationTasks = subscriptionRunners.stream()
+                .map(subscriptionRunner -> CompletableFuture.runAsync(subscriptionRunner::stop))
                 .toArray(CompletableFuture[]::new);
 
         CompletableFuture.allOf(deactivationTasks).join();
@@ -68,10 +68,10 @@ public class SubscriptionManager {
         LeaseBroker leaseBroker = new LeaseBroker(leaseConfig);
         LeaseRunner leaseRunner = new LeaseRunner(leaseBroker, executorService);
 
-        PollingRoutine routine = new PollingRoutine(pollingConfig, poller, subscription);
-        PollingThread pollingThread = new PollingThread(leaseBroker, leaseRunner, routine);
-        pollingThread.start();
+        PollingRoutine routine = new PollingRoutine(pollingConfig, poller, subscription.getQueue());
+        SubscriptionRunner subscriptionRunner = new SubscriptionRunner(subscription, leaseBroker, leaseRunner, routine);
+        subscriptionRunner.start();
 
-        pollingThreads.add(pollingThread);
+        subscriptionRunners.add(subscriptionRunner);
     }
 }
