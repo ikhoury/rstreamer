@@ -29,7 +29,7 @@ class SubscriptionRunner {
         this.subscription = subscription;
         this.nativeThread = new Thread(new SubscriptionRunnerRoutine(routine));
 
-        nativeThread.setName("PollingThread-" + nativeThread.getId());
+        nativeThread.setName("SubscriptionRunner-" + nativeThread.getId());
     }
 
     void start() {
