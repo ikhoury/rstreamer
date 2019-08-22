@@ -1,6 +1,7 @@
 package com.github.ikhoury.driver;
 
 import com.github.ikhoury.config.JedisConfig;
+import org.apache.commons.pool2.impl.GenericObjectPoolConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import redis.clients.jedis.Jedis;
@@ -19,7 +20,8 @@ public class JedisBatchPoller implements RedisBatchPoller {
     private final int pollTimeoutInSeconds;
 
     public JedisBatchPoller(JedisConfig jedisConfig) {
-        this.jedisPool = new JedisPool(jedisConfig.getHost(), jedisConfig.getPort());
+        GenericObjectPoolConfig config = configurePool(jedisConfig.getSubscriptionCount());
+        this.jedisPool = new JedisPool(config, jedisConfig.getHost(), jedisConfig.getPort());
         this.pollTimeoutInSeconds = jedisConfig.getPollTimeoutInSeconds();
     }
 
@@ -49,5 +51,20 @@ public class JedisBatchPoller implements RedisBatchPoller {
             LOGGER.info("Polled {} items from {}", items.get().size(), queue);
             return items.get();
         }
+    }
+
+    /**
+     * We need as much connections as the number of subscriptions, since
+     * each subscription is backed by one polling thread.
+     *
+     * @param subscriptionCount The number of subscriptions that will be run
+     * @return Configuration for the jedis pool
+     */
+    private GenericObjectPoolConfig configurePool(int subscriptionCount) {
+        GenericObjectPoolConfig config = new GenericObjectPoolConfig();
+        config.setMinIdle(subscriptionCount);
+        config.setMaxIdle(subscriptionCount);
+        config.setJmxEnabled(false);
+        return config;
     }
 }

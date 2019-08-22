@@ -5,6 +5,7 @@ public class JedisConfigBuilder {
     private String host = "localhost";
     private int port = 6379;
     private int pollTimeoutInSeconds = 5;
+    private int subscriptionCount = 8;
 
     private JedisConfigBuilder() {
 
@@ -29,7 +30,12 @@ public class JedisConfigBuilder {
         return this;
     }
 
+    public JedisConfigBuilder withSubscriptionCount(int subscriptionCount) {
+        this.subscriptionCount = subscriptionCount;
+        return this;
+    }
+
     public JedisConfig build() {
-        return new JedisConfig(host, port, pollTimeoutInSeconds);
+        return new JedisConfig(host, port, pollTimeoutInSeconds, subscriptionCount);
     }
 }

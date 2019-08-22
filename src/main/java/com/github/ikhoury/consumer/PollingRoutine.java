@@ -12,12 +12,11 @@ import static com.github.ikhoury.util.RandomOutcome.randomBooleanOutcome;
 import static java.util.Collections.emptyList;
 
 /**
- * This routine fetches work items from a queue and processes it
- * with every worker in the subscription. The routine will attempt to batch poll for items
- * to increase throughput. If there are not enough items in the queue to justify the heavy continuous batch polling,
- * the routine switches back to single polling.
+ * This routine fetches work items from a queue. The routine will attempt to batch poll for items
+ * to increase throughput. If there are not enough items in the queue to justify the continuous batch polling,
+ * the routine switches back to single polling since it is more efficient for few items.
  */
-public class PollingRoutine {
+class PollingRoutine {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(PollingRoutine.class);
 
@@ -42,7 +41,7 @@ public class PollingRoutine {
             shouldBatchPoll = shouldBatchPollBasedOnSizeOf(items);
             return items;
         } else {
-            shouldBatchPoll = shouldBatchPollBasedOnRandomOutcome();
+            shouldBatchPoll = batchSize > 1 && shouldBatchPollBasedOnRandomOutcome();
             LOGGER.trace("Single polling on {}", workQueue);
             return poller.pollForSingleItemFrom(workQueue)
                     .map(Collections::singletonList)

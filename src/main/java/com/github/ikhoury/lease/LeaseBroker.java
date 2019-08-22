@@ -7,8 +7,8 @@ import org.slf4j.LoggerFactory;
 import java.util.concurrent.Semaphore;
 
 /**
- * This class hands out leases to be run in a LeaseRunner. Only a specified number of leases
- * can be handed out. A lease owner should return the lease after running for it to be reused.
+ * This class hands out leases to be run in a LeaseRunner. A limited number of leases
+ * can be active at once. A lease should be returned so it can be reused.
  */
 public class LeaseBroker {
 
@@ -27,7 +27,7 @@ public class LeaseBroker {
      * If no lease is available then the caller will wait indefinitely for one.
      *
      * @param name Description for the lease
-     * @return A Lease for the task
+     * @return A lease
      */
     public Lease acquireLeaseFor(String name) {
         leaseStore.acquireUninterruptibly();
@@ -36,6 +36,11 @@ public class LeaseBroker {
         return new Lease(name);
     }
 
+    /**
+     * Returns a lease so it can be reused
+     *
+     * @param lease The lease to return
+     */
     void returnLease(Lease lease) {
         leaseStore.release();
         LOGGER.info("Released a lease for {}", lease.getName());
