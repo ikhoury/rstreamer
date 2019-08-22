@@ -58,7 +58,7 @@
     </dependencies>
 
     <scm>
-        <developerConnection>scm:git:ssh://github.com/ikhoury/rstreamer</developerConnection>
+        <developerConnection>scm:git:ssh://git@github.com/ikhoury/rstreamer</developerConnection>
     </scm>
 
     <build>
