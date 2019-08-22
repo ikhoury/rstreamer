@@ -27,7 +27,7 @@ class SubscriptionRunner {
         this.leaseBroker = leaseBroker;
         this.leaseRunner = leaseRunner;
         this.subscription = subscription;
-        this.nativeThread = new Thread(new SubscriptionRunnerRoutine(routine));
+        this.nativeThread = new Thread(new SubscriptionRunnerTask(routine));
 
         nativeThread.setName("SubscriptionRunner-" + nativeThread.getId());
     }
@@ -47,11 +47,11 @@ class SubscriptionRunner {
         }
     }
 
-    private class SubscriptionRunnerRoutine implements Runnable {
+    private class SubscriptionRunnerTask implements Runnable {
 
         private final PollingRoutine routine;
 
-        SubscriptionRunnerRoutine(PollingRoutine routine) {
+        SubscriptionRunnerTask(PollingRoutine routine) {
             this.routine = routine;
         }
 

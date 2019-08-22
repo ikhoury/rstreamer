@@ -42,8 +42,6 @@ public class LeaseBrokerTest {
             extraLeases[i] = CompletableFuture.runAsync(() -> broker.acquireLeaseFor("name"));
         }
 
-        assertThat(broker.activeLeaseCount(), equalTo(MAX_ALLOWED_LEASES));
-        assertThat(broker.availableLeaseCount(), equalTo(0));
         for (CompletableFuture future : extraLeases) {
             assertThat(future.isDone(), equalTo(false));
         }

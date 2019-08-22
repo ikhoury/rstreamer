@@ -22,6 +22,12 @@ public class LeaseRunner {
         this.leaseBroker = leaseBroker;
     }
 
+    /**
+     * Every lease holds a task to be run. The task is run asynchronously.
+     * The lease is automatically returned after the task completes.
+     *
+     * @param lease
+     */
     public void run(Lease lease) {
         LOGGER.info("Running lease for {}", lease.getName());
         executor.execute(() -> {
