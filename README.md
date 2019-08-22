@@ -56,8 +56,8 @@ When a queue has only a few items, it can be more efficient to single poll for i
 especially because single polling can block on the server side until items are available, while batch polling will continuously attempt to fetch items.
 Therefore, the batch size threshold sets a minimum number of items that must be fetched in a batch in order to continue batch polling in the next round.
 
-### Sample code
-#### Worker 
+## Sample code
+### Worker 
 ```
 public class SampleWorker implements Worker {
 
@@ -67,7 +67,7 @@ public class SampleWorker implements Worker {
     }
 }
 ```
-#### Batch Worker
+### Batch Worker
 ```
 public class SampleBatchWorker implements BatchWorker {
 
@@ -82,14 +82,14 @@ public class SampleBatchWorker implements BatchWorker {
     }
 }
 ```
-#### Work Subscription
+### Work Subscription
 ```
 List<Worker> workers = new ArrayList();
 workers.add(new SampleWorker());
 workers.add(new SampleBatchWorker());
 WorkSubscription subscription = new WorkSubscription("my:task:queue", workers);
 ```
-#### Subscription Manager
+### Subscription Manager
 ```
 SubscriptionManager subscriptionManager = new SubscriptionManager(createSubscriptionManagerConfig(), createRedisPoller());
 
