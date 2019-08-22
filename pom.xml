@@ -57,6 +57,10 @@
         </dependency>
     </dependencies>
 
+    <scm>
+        <developerConnection>scm:git:ssh://github.com/ikhoury/rstreamer</developerConnection>
+    </scm>
+
     <build>
         <plugins>
             <plugin>
@@ -66,6 +70,14 @@
                 <configuration>
                     <source>8</source>
                     <target>8</target>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-release-plugin</artifactId>
+                <version>2.5.3</version>
+                <configuration>
+                    <tagNameFormat>v@{project.version}</tagNameFormat>
                 </configuration>
             </plugin>
         </plugins>
