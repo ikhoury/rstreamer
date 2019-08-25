@@ -17,7 +17,7 @@ RStreamer is more efficient than regular polling using jedis because of the foll
 - Tasks can be processed concurrently. The concurrency level is controlled using `Leases` which effectively back-pressure the polling thread, making it wait until capacity is available before fetching more tasks from the queue.
 
 ### Subscription Manager
-All work subscriptions must be added to the `SubscriptionManager` prior to activation.
+All subscriptions must be added to the `SubscriptionManager` prior to activation.
 The manager depends on a `RedisBatchPoller`, the application driver for polling tasks from redis.
 Its current implementation is `JedisBatchPoller`, which uses the jedis driver to communicate with redis.
 To ensure graceful shutdown, call `deactivateSubscriptions()` before exiting your application to stop polling from redis and finish processing outstanding tasks.
@@ -29,7 +29,6 @@ To ensure graceful shutdown, call `deactivateSubscriptions()` before exiting you
 JedisConfig jedisConfig = JedisConfigBuilder.defaultJedisConfig()
                 .withHost("myhost")
                 .withPort(6379)
-                .withPollTimeoutInSeconds(3)
                 .withSubscriptionCount(10)
                 .build();
 ```
