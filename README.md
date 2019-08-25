@@ -4,20 +4,23 @@
 This library can be used to implement applications that need to process messages from redis queues.
 The library uses https://github.com/xetorthio/jedis as its redis java driver in `JedisBatchPoller`.
 
-## Design
-The concept of a `WorkSubscription` is used to describe a group of interested message handlers that want to process items from a redis queue.
-The subscription is activated using the `SubscriptionManager` which runs background threads that poll for tasks and process them using workers.
-RStreamer is more efficient than regular polling using jedis:
-- Tasks can be fetched in batches from a queue, which is much more efficient over the network and allows workers to process this batch in one run.
-- Each `WorkSubscription` will have only one thread polling for tasks regardless of the number of workers.
-- Workers will process tasks asynchronously on a dedicated thread pool for each subscription, freeing the polling thread.
-- Concurrent task processing is controlled using `Leases` that effectively back-pressure the polling thread. 
-A configurable number of running processes is allowed. The polling thread waits until capacity is available before fetching more tasks from the queue.
+## Setup
+Maven is used to build the project artefact. Run `mvn install` to have the artefact available in your local repostiory.
+
+## Conecpts
+A `WorkSubscription` describes a group of interested message handlers that want to process items from a redis queue.
+The subscription is activated using the `SubscriptionManager`. It runs background threads that poll for tasks and process them using workers.
+RStreamer is more efficient than regular polling using jedis because of the following:
+- Several tasks can be fetched in one batch which is far more network efficient and allows workers to process this batch in one run.
+- Each `WorkSubscription` has one thread dedicated to fetching tasks from redis.
+- Workers process tasks asynchronously on a dedicated thread pool for each subscription.
+- Tasks can be processed concurrently. The concurrency level is controlled using `Leases` which effectively back-pressure the polling thread, making it wait until capacity is available before fetching more tasks from the queue.
+
 ### Subscription Manager
-All work subscriptions must be added to the `SubscriptionManager` prior to `activation`.
+All work subscriptions must be added to the `SubscriptionManager` prior to activation.
 The manager depends on a `RedisBatchPoller`, the application driver for polling tasks from redis.
 Its current implementation is `JedisBatchPoller`, which uses the jedis driver to communicate with redis.
-To ensure graceful shutdown, call `deactivateSubscriptions()` before exiting your application to stop polling from redis and finish processing of outstanding tasks.
+To ensure graceful shutdown, call `deactivateSubscriptions()` before exiting your application to stop polling from redis and finish processing outstanding tasks.
 
 ## Configuration
 ### JedisConfig
@@ -31,8 +34,8 @@ JedisConfig jedisConfig = JedisConfigBuilder.defaultJedisConfig()
                 .build();
 ```
 The default config assumes you are connecting to the default redis port on localhost.
-The subscription count must be at least equal to the number of subscriptions added to
-`SubscriptionManager` in order to have enough resources to poll tasks from all queues concurrently.  
+
+**Note:** The subscription count must be equal to the number of subscriptions activated in order to have enough resources for concurrently polling all queues.
 
 ### SubscriptionManagerConfig
 `SubscriptionManager` is configured using `SubscriptionManagerConfig`.
@@ -56,7 +59,7 @@ When a queue has only a few items, it can be more efficient to single poll for i
 especially because single polling can block on the server side until items are available, while batch polling will continuously attempt to fetch items.
 Therefore, the batch size threshold sets a minimum number of items that must be fetched in a batch in order to continue batch polling in the next round.
 
-## Sample code
+## Usage: Sample snippets
 ### Worker 
 ```
 public class SampleWorker implements Worker {
