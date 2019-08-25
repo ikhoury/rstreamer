@@ -52,11 +52,11 @@ SubscriptionManagerConfig config = SubscriptionManageConfigBuilder.defaultSubscr
                 )
                 .build();
 ```
+#### LeaseConfig
 The number of available leases controls the concurrency level for each subscription.
 The larger the number, the more tasks (or group of tasks) can be processed in parallel before blocking the polling thread.
-When a queue has only a few items, it can be more efficient to single poll for items than to batch poll,
-especially because single polling can block on the server side until items are available, while batch polling will continuously attempt to fetch items.
-Therefore, the batch size threshold sets a minimum number of items that must be fetched in a batch in order to continue batch polling in the next round.
+#### PollingConfig
+It is more efficient to single poll than to batch poll a queue with very few items. Single polling uses redis's blocking operation and hence can wait on the server side until an item is inserted. On the other hand, batch polling will continuously try to fetch a list of items. Therefore, a `batchSizeThreshold` parameter is used to specify the minimum number of items that must be fetched in a batch in order to continue batch polling in the next round.
 
 ## Usage: Sample snippets
 ### Worker 
