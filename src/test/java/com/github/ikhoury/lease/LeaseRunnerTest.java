@@ -13,6 +13,8 @@ import static org.mockito.Mockito.*;
 
 public class LeaseRunnerTest {
 
+    private static final String WORK_QUEUE = "queue";
+
     private LeaseRunner leaseRunner;
 
     private Lease lease;
@@ -29,7 +31,7 @@ public class LeaseRunnerTest {
 
         when(lease.getTask()).thenReturn(task);
 
-        leaseRunner = new LeaseRunner(leaseBroker, executorService);
+        leaseRunner = new LeaseRunner(leaseBroker, executorService, WORK_QUEUE);
     }
 
     @Test
