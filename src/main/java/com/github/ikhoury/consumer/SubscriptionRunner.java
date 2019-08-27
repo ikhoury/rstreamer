@@ -64,7 +64,7 @@ class SubscriptionRunner {
                 List<String> items = routine.doPoll();
 
                 if (!items.isEmpty()) {
-                    Lease lease = leaseBroker.acquireLeaseFor(queue);
+                    Lease lease = leaseBroker.acquireLease();
 
                     if (items.size() == 1) {
                         lease.setTask(() -> processSingleItem(items.get(0)));

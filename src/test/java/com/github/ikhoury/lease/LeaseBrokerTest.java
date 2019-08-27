@@ -26,7 +26,7 @@ public class LeaseBrokerTest {
 
         when(leaseConfig.getMaxActiveLeases()).thenReturn(MAX_ALLOWED_LEASES);
 
-        broker = new LeaseBroker(leaseConfig);
+        broker = new LeaseBroker(leaseConfig, "queue");
     }
 
     @Test(timeout = LONG_MILLIS)
@@ -35,11 +35,11 @@ public class LeaseBrokerTest {
         CompletableFuture[] extraLeases = new CompletableFuture[leasesOverLimit];
 
         for (int i = 0; i < MAX_ALLOWED_LEASES; i++) {
-            broker.acquireLeaseFor("name");
+            broker.acquireLease();
         }
 
         for (int i = 0; i < leasesOverLimit; i++) {
-            extraLeases[i] = CompletableFuture.runAsync(() -> broker.acquireLeaseFor("name"));
+            extraLeases[i] = CompletableFuture.runAsync(() -> broker.acquireLease());
         }
 
         for (CompletableFuture future : extraLeases) {
@@ -51,11 +51,11 @@ public class LeaseBrokerTest {
     public void reusesLeaseWhenReturned() {
         // Acquire all leases
         for (int i = 0; i < MAX_ALLOWED_LEASES; i++) {
-            broker.acquireLeaseFor("name");
+            broker.acquireLease();
         }
 
         // Attempt to acquire one more lease
-        CompletableFuture oneMoreLease = CompletableFuture.runAsync(() -> broker.acquireLeaseFor("name"));
+        CompletableFuture oneMoreLease = CompletableFuture.runAsync(() -> broker.acquireLease());
         assertThat(oneMoreLease.isDone(), equalTo(false));
 
         // Reuse returned lease
@@ -68,7 +68,7 @@ public class LeaseBrokerTest {
         assertThat(broker.activeLeaseCount(), equalTo(0));
         assertThat(broker.availableLeaseCount(), equalTo(MAX_ALLOWED_LEASES));
 
-        broker.acquireLeaseFor("name");
+        broker.acquireLease();
         assertThat(broker.activeLeaseCount(), equalTo(1));
         assertThat(broker.availableLeaseCount(), equalTo(MAX_ALLOWED_LEASES - 1));
 

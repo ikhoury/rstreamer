@@ -20,11 +20,8 @@ import static org.mockito.Mockito.*;
 
 public class SubscriptionRunnerTest {
 
-    private static final String WORK_QUEUE = "workQueue";
-
     private SubscriptionRunner subscriptionRunner;
     private PollingRoutine routine;
-    private LeaseRunner leaseRunner;
     private LeaseBroker leaseBroker;
     private Worker singleItemWorker;
     private BatchWorker multipleItemsWorker;
@@ -36,13 +33,12 @@ public class SubscriptionRunnerTest {
         singleItemWorker = mock(Worker.class);
         multipleItemsWorker = mock(BatchWorker.class);
         leaseBroker = mock(LeaseBroker.class);
-        leaseRunner = mock(LeaseRunner.class);
+        LeaseRunner leaseRunner = mock(LeaseRunner.class);
         WorkSubscription subscription = mock(WorkSubscription.class);
-        Lease lease = new Lease(WORK_QUEUE);
+        Lease lease = new Lease();
 
-        when(subscription.getQueue()).thenReturn(WORK_QUEUE);
         when(subscription.getWorkers()).thenReturn(asList(singleItemWorker, multipleItemsWorker));
-        when(leaseBroker.acquireLeaseFor(any())).thenReturn(lease);
+        when(leaseBroker.acquireLease()).thenReturn(lease);
         doAnswer(invocation -> {
             Lease argument = invocation.getArgument(0, Lease.class);
             argument.getTask().run();
@@ -58,7 +54,7 @@ public class SubscriptionRunnerTest {
 
         subscriptionRunner.start();
 
-        verify(leaseBroker, timeout(SHORT_MILLIS).atLeastOnce()).acquireLeaseFor(WORK_QUEUE);
+        verify(leaseBroker, timeout(SHORT_MILLIS).atLeastOnce()).acquireLease();
     }
 
     @Test
@@ -67,7 +63,7 @@ public class SubscriptionRunnerTest {
 
         subscriptionRunner.start();
 
-        verify(leaseBroker, after(SHORT_MILLIS).never()).acquireLeaseFor(WORK_QUEUE);
+        verify(leaseBroker, after(SHORT_MILLIS).never()).acquireLease();
     }
 
     @Test

@@ -65,10 +65,11 @@ public class SubscriptionManager {
 
     private void activateSubscription(WorkSubscription subscription) {
         ExecutorService executorService = newFixedThreadPool(leaseConfig.getMaxActiveLeases());
-        LeaseBroker leaseBroker = new LeaseBroker(leaseConfig);
-        LeaseRunner leaseRunner = new LeaseRunner(leaseBroker, executorService);
+        String queue = subscription.getQueue();
+        LeaseBroker leaseBroker = new LeaseBroker(leaseConfig, queue);
+        LeaseRunner leaseRunner = new LeaseRunner(leaseBroker, executorService, queue);
 
-        PollingRoutine routine = new PollingRoutine(pollingConfig, poller, subscription.getQueue());
+        PollingRoutine routine = new PollingRoutine(pollingConfig, poller, queue);
         SubscriptionRunner subscriptionRunner = new SubscriptionRunner(subscription, leaseBroker, leaseRunner, routine);
         subscriptionRunner.start();
 

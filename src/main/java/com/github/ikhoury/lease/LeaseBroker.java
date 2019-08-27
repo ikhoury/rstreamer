@@ -16,24 +16,25 @@ public class LeaseBroker {
 
     private final Semaphore leaseStore;
     private final int maxActiveLeases;
+    private String queue;
 
-    public LeaseBroker(LeaseConfig leaseConfig) {
+    public LeaseBroker(LeaseConfig leaseConfig, String queue) {
         this.maxActiveLeases = leaseConfig.getMaxActiveLeases();
         this.leaseStore = new Semaphore(maxActiveLeases);
+        this.queue = queue;
     }
 
     /**
      * This method guarantees that the caller will return with a lease.
      * If no lease is available then the caller will wait indefinitely for one.
      *
-     * @param name Description for the lease
      * @return A lease
      */
-    public Lease acquireLeaseFor(String name) {
+    public Lease acquireLease() {
         leaseStore.acquireUninterruptibly();
 
-        LOGGER.info("Acquired a lease for {}, {} estimated lease(s) left", name, availableLeaseCount());
-        return new Lease(name);
+        LOGGER.info("Acquired a lease for {}, {} estimated lease(s) left", queue, availableLeaseCount());
+        return new Lease();
     }
 
     /**
@@ -43,7 +44,7 @@ public class LeaseBroker {
      */
     void returnLease(Lease lease) {
         leaseStore.release();
-        LOGGER.info("Released a lease for {}", lease.getName());
+        LOGGER.info("Returning a lease for {}", queue);
     }
 
     int activeLeaseCount() {

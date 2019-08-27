@@ -2,11 +2,9 @@ package com.github.ikhoury.lease;
 
 public class Lease {
 
-    private final String name;
     private Runnable task;
 
-    public Lease(String name) {
-        this.name = name;
+    public Lease() {
         this.task = () -> {
             // No Op
         };
@@ -18,9 +16,5 @@ public class Lease {
 
     public void setTask(Runnable task) {
         this.task = task;
-    }
-
-    public String getName() {
-        return name;
     }
 }

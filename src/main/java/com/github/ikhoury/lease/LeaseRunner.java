@@ -16,25 +16,27 @@ public class LeaseRunner {
 
     private final ExecutorService executor;
     private final LeaseBroker leaseBroker;
+    private final String queue;
 
-    public LeaseRunner(LeaseBroker leaseBroker, ExecutorService executor) {
+    public LeaseRunner(LeaseBroker leaseBroker, ExecutorService executor, String queue) {
         this.executor = executor;
         this.leaseBroker = leaseBroker;
+        this.queue = queue;
     }
 
     /**
      * Every lease holds a task to be run. The task is run asynchronously.
      * The lease is automatically returned after the task completes.
      *
-     * @param lease
+     * @param lease Lease that contains the task to run
      */
     public void run(Lease lease) {
-        LOGGER.info("Running lease for {}", lease.getName());
+        LOGGER.info("Running lease for {}", queue);
         executor.execute(() -> {
             try {
                 lease.getTask().run();
             } catch (Throwable throwable) {
-                LOGGER.error("Failed to run lease for {}", lease.getName(), throwable);
+                LOGGER.error("Failed to run lease for {}", queue, throwable);
             } finally {
                 leaseBroker.returnLease(lease);
             }
@@ -47,7 +49,7 @@ public class LeaseRunner {
 
         try {
             do {
-                LOGGER.debug("Waiting for {} task(s) to complete", leaseBroker.activeLeaseCount());
+                LOGGER.debug("Waiting for {} task(s) to complete for {}", leaseBroker.activeLeaseCount(), queue);
                 isTerminated = executor.awaitTermination(SHUTDOWN_WAIT_SECONDS, TimeUnit.SECONDS);
             } while (!isTerminated);
         } catch (InterruptedException e) {
