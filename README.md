@@ -7,6 +7,23 @@ The library uses https://github.com/xetorthio/jedis as its redis java driver in 
 ## Setup
 Maven is used to build the project artefact. Run `mvn install` to have the artefact available in your local repostiory.
 
+### Dependencies
+The library depends on resilience4j for reliably handling redis connection failures.
+Add the missing resilience4j dependencies to your pom as follows:
+```
+<dependency>
+	<groupId>io.github.resilience4j</groupId>
+	<artifactId>resilience4j-circuitbreaker</artifactId>
+	<version>${resilience4j.version}</version>
+</dependency>
+<dependency>
+	<groupId>io.github.resilience4j</groupId>
+	<artifactId>resilience4j-retry</artifactId>
+	<version>${resilience4j.version}</version>
+</dependency>
+```
+The library is built with version `0.17.0`. 
+
 ## Conecpts
 A `WorkSubscription` describes a group of interested message handlers that want to process items from a redis queue.
 The subscription is activated using the `SubscriptionManager`. It runs background threads that poll for tasks and process them using workers.
