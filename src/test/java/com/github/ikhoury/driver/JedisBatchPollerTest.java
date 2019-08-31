@@ -23,6 +23,7 @@ public class JedisBatchPollerTest {
     private static final String ITEM_QUEUE = JedisBatchPollerTest.class.getCanonicalName() + ":" + "items";
     private static final String SINGLE_ITEM = "My Item";
     private static final String[] MULTIPLE_ITEMS = new String[]{"Item 1", "Item 2", "Item 3"};
+    private static final int NUMBER_OF_MULTIPLE_ITEMS = MULTIPLE_ITEMS.length;
 
     @Rule
     public GenericContainer redis = new GenericContainer<>("redis:5.0.5-alpine")
@@ -70,7 +71,7 @@ public class JedisBatchPollerTest {
     public void pollsMultipleItems() {
         pushItemsToQueue(MULTIPLE_ITEMS);
 
-        List<String> items = poller.pollForMultipleItemsFrom(ITEM_QUEUE, MULTIPLE_ITEMS.length);
+        List<String> items = poller.pollForMultipleItemsFrom(ITEM_QUEUE, NUMBER_OF_MULTIPLE_ITEMS);
 
         assertThat(items, containsInAnyOrder(MULTIPLE_ITEMS));
     }
@@ -78,15 +79,28 @@ public class JedisBatchPollerTest {
     @Test
     public void pollsForSubsetOfMultipleItems() {
         pushItemsToQueue(MULTIPLE_ITEMS);
-        int numberOfItems = MULTIPLE_ITEMS.length;
-        String[] expectedSubset = Arrays.copyOfRange(MULTIPLE_ITEMS, 0, numberOfItems - 1);
-        String lastItem = MULTIPLE_ITEMS[numberOfItems - 1];
+        String[] expectedSubset = Arrays.copyOfRange(MULTIPLE_ITEMS, 0, NUMBER_OF_MULTIPLE_ITEMS - 1);
+        String lastItem = MULTIPLE_ITEMS[NUMBER_OF_MULTIPLE_ITEMS - 1];
 
-        List<String> subset = poller.pollForMultipleItemsFrom(ITEM_QUEUE, numberOfItems - 1);
+        List<String> subset = poller.pollForMultipleItemsFrom(ITEM_QUEUE, NUMBER_OF_MULTIPLE_ITEMS - 1);
         List<String> remaining = poller.pollForMultipleItemsFrom(ITEM_QUEUE, 1);
 
         assertThat(subset, containsInAnyOrder(expectedSubset));
         assertThat(remaining, containsInAnyOrder(lastItem));
+    }
+
+    @Test(expected = RedisConnectionException.class)
+    public void throwsRedisConnectionExceptionOnSinglePoll() {
+        redis.stop();
+
+        poller.pollForSingleItemFrom(ITEM_QUEUE);
+    }
+
+    @Test(expected = RedisConnectionException.class)
+    public void throwsRedisConnectionExceptionOnBatchPoll() {
+        redis.stop();
+
+        poller.pollForMultipleItemsFrom(ITEM_QUEUE, NUMBER_OF_MULTIPLE_ITEMS);
     }
 
     private void pushItemsToQueue(String... items) {

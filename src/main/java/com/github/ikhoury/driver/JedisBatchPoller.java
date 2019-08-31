@@ -8,6 +8,7 @@ import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.Response;
 import redis.clients.jedis.Transaction;
+import redis.clients.jedis.exceptions.JedisConnectionException;
 
 import java.util.List;
 import java.util.Optional;
@@ -26,7 +27,7 @@ public class JedisBatchPoller implements RedisBatchPoller {
     }
 
     @Override
-    public Optional<String> pollForSingleItemFrom(String queue) {
+    public Optional<String> pollForSingleItemFrom(String queue) throws RedisConnectionException {
         try (Jedis jedis = jedisPool.getResource()) {
             List<String> pollResult = jedis.blpop(pollTimeoutInSeconds, queue);
             if (pollResult != null) {
@@ -37,11 +38,13 @@ public class JedisBatchPoller implements RedisBatchPoller {
                 LOGGER.trace("No item found during last poll");
                 return Optional.empty();
             }
+        } catch (JedisConnectionException connectionException) {
+            throw new RedisConnectionException(connectionException);
         }
     }
 
     @Override
-    public List<String> pollForMultipleItemsFrom(String queue, int count) {
+    public List<String> pollForMultipleItemsFrom(String queue, int count) throws RedisConnectionException {
         try (Jedis jedis = jedisPool.getResource()) {
             Transaction transaction = jedis.multi();
             Response<List<String>> items = transaction.lrange(queue, 0, count - 1);
@@ -50,6 +53,8 @@ public class JedisBatchPoller implements RedisBatchPoller {
 
             LOGGER.info("Polled {} items from {}", items.get().size(), queue);
             return items.get();
+        } catch (JedisConnectionException connectionException) {
+            throw new RedisConnectionException(connectionException);
         }
     }
 
