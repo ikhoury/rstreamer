@@ -25,10 +25,10 @@ public class Resilience4jReliableBatchPoller extends ReliableBatchPoller {
     private final CircuitBreaker circuitBreaker;
     private final Retry retry;
 
-    public Resilience4jReliableBatchPoller(RedisBatchPoller poller, String queue) {
+    public Resilience4jReliableBatchPoller(RedisBatchPoller poller) {
         super(poller);
-        this.circuitBreaker = CircuitBreaker.of(queue, createCircuitBreakerConfig());
-        this.retry = Retry.of(queue, createRetryConfig());
+        this.circuitBreaker = CircuitBreaker.of(this.getClass().getSimpleName(), createCircuitBreakerConfig());
+        this.retry = Retry.of(this.getClass().getSimpleName(), createRetryConfig());
     }
 
     @SuppressWarnings("unchecked")
@@ -68,7 +68,7 @@ public class Resilience4jReliableBatchPoller extends ReliableBatchPoller {
         return CircuitBreakerConfig.custom()
                 .recordExceptions(RedisConnectionException.class)
                 .failureRateThreshold(TOLERANCE_PERCENTAGE_OF_CONNECTION_EXCEPTIONS)
-                .ringBufferSizeInClosedState(MAX_RETRY_ATTEMPTS * 10)
+                .ringBufferSizeInClosedState(MAX_RETRY_ATTEMPTS * 3)
                 .ringBufferSizeInHalfOpenState(MAX_RETRY_ATTEMPTS)
                 .build();
     }
