@@ -4,6 +4,8 @@ import com.github.ikhoury.config.LeaseConfig;
 import com.github.ikhoury.config.PollingConfig;
 import com.github.ikhoury.config.SubscriptionManagerConfig;
 import com.github.ikhoury.driver.RedisBatchPoller;
+import com.github.ikhoury.driver.ReliableBatchPoller;
+import com.github.ikhoury.driver.Resilience4jReliableBatchPoller;
 import com.github.ikhoury.lease.LeaseBroker;
 import com.github.ikhoury.lease.LeaseRunner;
 import com.github.ikhoury.worker.WorkSubscription;
@@ -68,8 +70,9 @@ public class SubscriptionManager {
         String queue = subscription.getQueue();
         LeaseBroker leaseBroker = new LeaseBroker(leaseConfig, queue);
         LeaseRunner leaseRunner = new LeaseRunner(leaseBroker, executorService, queue);
+        ReliableBatchPoller reliableBatchPoller = new Resilience4jReliableBatchPoller(poller, queue);
 
-        PollingRoutine routine = new PollingRoutine(pollingConfig, poller, queue);
+        PollingRoutine routine = new PollingRoutine(pollingConfig, reliableBatchPoller, queue);
         SubscriptionRunner subscriptionRunner = new SubscriptionRunner(subscription, leaseBroker, leaseRunner, routine);
         subscriptionRunner.start();
 
