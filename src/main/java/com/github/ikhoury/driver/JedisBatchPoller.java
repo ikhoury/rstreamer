@@ -1,6 +1,6 @@
 package com.github.ikhoury.driver;
 
-import com.github.ikhoury.config.JedisConfig;
+import com.github.ikhoury.config.BatchPollerConfig;
 import org.apache.commons.pool2.impl.GenericObjectPoolConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,10 +20,10 @@ public class JedisBatchPoller implements RedisBatchPoller {
     private final JedisPool jedisPool;
     private final int pollTimeoutInSeconds;
 
-    public JedisBatchPoller(JedisConfig jedisConfig) {
-        GenericObjectPoolConfig config = configurePool(jedisConfig.getSubscriptionCount());
-        this.jedisPool = new JedisPool(config, jedisConfig.getHost(), jedisConfig.getPort());
-        this.pollTimeoutInSeconds = jedisConfig.getPollTimeoutInSeconds();
+    public JedisBatchPoller(BatchPollerConfig batchPollerConfig) {
+        GenericObjectPoolConfig config = configurePool(batchPollerConfig.getSubscriptionCount());
+        this.jedisPool = new JedisPool(config, batchPollerConfig.getHost(), batchPollerConfig.getPort());
+        this.pollTimeoutInSeconds = batchPollerConfig.getPollTimeoutInSeconds();
     }
 
     @Override

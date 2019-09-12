@@ -40,10 +40,10 @@ Its current implementation is `JedisBatchPoller`, which uses the jedis driver to
 To ensure graceful shutdown, call `deactivateSubscriptions()` before exiting your application to stop polling from redis and finish processing outstanding tasks.
 
 ## Configuration
-### JedisConfig
-`JedisBatchPoller` is configured using `JedisConfig`.
+### BatchPollerConfig
+`JedisBatchPoller` is configured using a `BatchPollerConfig`.
 ```
-JedisConfig jedisConfig = JedisConfigBuilder.defaultJedisConfig()
+BatchPollerConfig batchPollerConfig = BatchPollerConfigBuilder.defaultBatchPollerConfig()
                 .withHost("myhost")
                 .withPort(6379)
                 .withSubscriptionCount(10)

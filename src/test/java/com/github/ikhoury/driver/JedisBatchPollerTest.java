@@ -1,6 +1,6 @@
 package com.github.ikhoury.driver;
 
-import com.github.ikhoury.config.JedisConfig;
+import com.github.ikhoury.config.BatchPollerConfig;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -11,7 +11,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
-import static com.github.ikhoury.config.JedisConfigBuilder.defaultJedisConfig;
+import static com.github.ikhoury.config.BatchPollerConfigBuilder.defaultBatchPollerConfig;
 import static com.github.ikhoury.util.TimeInterval.SHORT_SECOND;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsInAnyOrder;
@@ -36,12 +36,12 @@ public class JedisBatchPollerTest {
     public void setUp() {
         String host = redis.getContainerIpAddress();
         int port = redis.getFirstMappedPort();
-        JedisConfig jedisConfig = defaultJedisConfig()
+        BatchPollerConfig batchPollerConfig = defaultBatchPollerConfig()
                 .withHost(host)
                 .withPort(port)
                 .withPollTimeoutInSeconds(SHORT_SECOND)
                 .build();
-        poller = new JedisBatchPoller(jedisConfig);
+        poller = new JedisBatchPoller(batchPollerConfig);
         redisTestDriver = new Jedis(host, port);
     }
 

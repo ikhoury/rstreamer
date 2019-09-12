@@ -2,14 +2,14 @@ package com.github.ikhoury.config;
 
 import java.util.Objects;
 
-public class JedisConfig {
+public class BatchPollerConfig {
 
     private String host;
     private int port;
     private int pollTimeoutInSeconds;
     private int subscriptionCount;
 
-    JedisConfig(String host, int port, int pollTimeoutInSeconds, int subscriptionCount) {
+    BatchPollerConfig(String host, int port, int pollTimeoutInSeconds, int subscriptionCount) {
         this.host = host;
         this.port = port;
         this.pollTimeoutInSeconds = pollTimeoutInSeconds;
@@ -36,7 +36,7 @@ public class JedisConfig {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        JedisConfig that = (JedisConfig) o;
+        BatchPollerConfig that = (BatchPollerConfig) o;
         return port == that.port &&
                 pollTimeoutInSeconds == that.pollTimeoutInSeconds &&
                 subscriptionCount == that.subscriptionCount &&
@@ -50,7 +50,7 @@ public class JedisConfig {
 
     @Override
     public String toString() {
-        return "JedisConfig{" +
+        return "BatchPollerConfig{" +
                 "host='" + host + '\'' +
                 ", port=" + port +
                 ", pollTimeoutInSeconds=" + pollTimeoutInSeconds +
