@@ -1,4 +1,4 @@
-package com.github.ikhoury.config;
+package com.github.ikhoury.config.poller;
 
 public class BatchPollerConfigBuilder {
 

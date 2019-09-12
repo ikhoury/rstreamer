@@ -1,6 +1,6 @@
 package com.github.ikhoury.driver;
 
-import com.github.ikhoury.config.BatchPollerConfig;
+import com.github.ikhoury.config.poller.BatchPollerConfig;
 import org.apache.commons.pool2.impl.GenericObjectPoolConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

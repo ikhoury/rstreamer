@@ -1,6 +1,6 @@
 package com.github.ikhoury.driver;
 
-import com.github.ikhoury.config.BatchPollerConfig;
+import com.github.ikhoury.config.poller.BatchPollerConfig;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -11,7 +11,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
-import static com.github.ikhoury.config.BatchPollerConfigBuilder.defaultBatchPollerConfig;
+import static com.github.ikhoury.config.poller.BatchPollerConfigBuilder.defaultBatchPollerConfig;
 import static com.github.ikhoury.util.TimeInterval.SHORT_SECOND;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsInAnyOrder;

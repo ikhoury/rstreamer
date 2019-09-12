@@ -1,6 +1,6 @@
 package com.github.ikhoury.lease;
 
-import com.github.ikhoury.config.LeaseConfig;
+import com.github.ikhoury.config.subsription.LeaseConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

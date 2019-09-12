@@ -1,6 +1,6 @@
 package com.github.ikhoury.driver;
 
-import com.github.ikhoury.config.ReliableBatchPollerConfig;
+import com.github.ikhoury.config.poller.ReliableBatchPollerConfig;
 import io.github.resilience4j.circuitbreaker.CallNotPermittedException;
 import io.github.resilience4j.circuitbreaker.CircuitBreaker;
 import io.github.resilience4j.circuitbreaker.CircuitBreakerConfig;

@@ -1,6 +1,6 @@
 package com.github.ikhoury.consumer;
 
-import com.github.ikhoury.config.SubscriptionManagerConfig;
+import com.github.ikhoury.config.subsription.SubscriptionManagerConfig;
 import com.github.ikhoury.driver.RedisBatchPoller;
 import com.github.ikhoury.worker.WorkSubscription;
 import com.github.ikhoury.worker.Worker;
@@ -9,7 +9,7 @@ import org.junit.Test;
 
 import java.util.Optional;
 
-import static com.github.ikhoury.config.SubscriptionManageConfigBuilder.defaultSubscriptionManagerConfig;
+import static com.github.ikhoury.config.subsription.SubscriptionManageConfigBuilder.defaultSubscriptionManagerConfig;
 import static com.github.ikhoury.util.TimeInterval.SHORT_MILLIS;
 import static java.util.Collections.singleton;
 import static java.util.Collections.singletonList;
