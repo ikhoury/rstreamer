@@ -31,17 +31,15 @@ public class Resilience4jReliableBatchPoller extends ReliableBatchPoller {
         this.retry = Retry.of(this.getClass().getSimpleName(), createRetryConfig());
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public Optional<String> pollForSingleItemFrom(String queue) throws RedisConnectionException {
-        Supplier reliableSupplier = decorateSupplier(() -> super.pollForSingleItemFrom(queue));
+        Supplier<Optional<String>> reliableSupplier = decorateSupplier(() -> super.pollForSingleItemFrom(queue));
         return getResultOrReturnEmpty(reliableSupplier, Optional.<String>empty());
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public List<String> pollForMultipleItemsFrom(String queue, int count) throws RedisConnectionException {
-        Supplier reliableSupplier = decorateSupplier(() -> super.pollForMultipleItemsFrom(queue, count));
+        Supplier<List<String>> reliableSupplier = decorateSupplier(() -> super.pollForMultipleItemsFrom(queue, count));
         return getResultOrReturnEmpty(reliableSupplier, emptyList());
     }
 
