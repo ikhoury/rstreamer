@@ -1,5 +1,6 @@
 package com.github.ikhoury.driver;
 
+import com.github.ikhoury.config.ReliableBatchPollerConfig;
 import io.github.resilience4j.circuitbreaker.CallNotPermittedException;
 import io.github.resilience4j.circuitbreaker.CircuitBreaker;
 import io.github.resilience4j.circuitbreaker.CircuitBreakerConfig;
@@ -19,16 +20,18 @@ import static java.util.Collections.emptyList;
 public class Resilience4jReliableBatchPoller extends ReliableBatchPoller {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(Resilience4jReliableBatchPoller.class);
-    private static final float TOLERANCE_PERCENTAGE_OF_CONNECTION_EXCEPTIONS = 0.25F;
-    private static final int MAX_RETRY_ATTEMPTS = 3;
+    private static final int CIRCUIT_BREAKER_BUFFER_SIZE_MULTIPLIER = 3;
 
     private final CircuitBreaker circuitBreaker;
     private final Retry retry;
 
-    public Resilience4jReliableBatchPoller(RedisBatchPoller poller) {
+    public Resilience4jReliableBatchPoller(RedisBatchPoller poller, ReliableBatchPollerConfig config) {
         super(poller);
-        this.circuitBreaker = CircuitBreaker.of(this.getClass().getSimpleName(), createCircuitBreakerConfig());
-        this.retry = Retry.of(this.getClass().getSimpleName(), createRetryConfig());
+        CircuitBreakerConfig circuitBreakerConfig = createCircuitBreakerConfig(config.getRetryAttempts(), config.getConnectionExceptionToleranceThreshold());
+        RetryConfig retryConfig = createRetryConfig(config.getRetryAttempts());
+        String simpleName = this.getClass().getSimpleName();
+        this.circuitBreaker = CircuitBreaker.of(simpleName, circuitBreakerConfig);
+        this.retry = Retry.of(simpleName, retryConfig);
     }
 
     @Override
@@ -62,19 +65,19 @@ public class Resilience4jReliableBatchPoller extends ReliableBatchPoller {
                 .decorate();
     }
 
-    private CircuitBreakerConfig createCircuitBreakerConfig() {
+    private CircuitBreakerConfig createCircuitBreakerConfig(int retryAttempts, float connectionExceptionFailureThreshold) {
         return CircuitBreakerConfig.custom()
                 .recordExceptions(RedisConnectionException.class)
-                .failureRateThreshold(TOLERANCE_PERCENTAGE_OF_CONNECTION_EXCEPTIONS)
-                .ringBufferSizeInClosedState(MAX_RETRY_ATTEMPTS * 3)
-                .ringBufferSizeInHalfOpenState(MAX_RETRY_ATTEMPTS)
+                .failureRateThreshold(connectionExceptionFailureThreshold)
+                .ringBufferSizeInClosedState(retryAttempts * CIRCUIT_BREAKER_BUFFER_SIZE_MULTIPLIER)
+                .ringBufferSizeInHalfOpenState(retryAttempts)
                 .build();
     }
 
-    private RetryConfig createRetryConfig() {
+    private RetryConfig createRetryConfig(int retryAttempts) {
         return RetryConfig.custom()
                 .retryExceptions(RedisConnectionException.class)
-                .maxAttempts(MAX_RETRY_ATTEMPTS)
+                .maxAttempts(retryAttempts)
                 .intervalFunction(IntervalFunction.ofExponentialBackoff())
                 .build();
     }
