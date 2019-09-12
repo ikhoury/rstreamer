@@ -4,7 +4,6 @@ import com.github.ikhoury.config.LeaseConfig;
 import com.github.ikhoury.config.PollingConfig;
 import com.github.ikhoury.config.SubscriptionManagerConfig;
 import com.github.ikhoury.driver.RedisBatchPoller;
-import com.github.ikhoury.driver.Resilience4jReliableBatchPoller;
 import com.github.ikhoury.lease.LeaseBroker;
 import com.github.ikhoury.lease.LeaseRunner;
 import com.github.ikhoury.worker.WorkSubscription;
@@ -37,7 +36,7 @@ public class SubscriptionManager {
     public SubscriptionManager(SubscriptionManagerConfig config, RedisBatchPoller poller) {
         this.subscriptionRunners = new ArrayList<>();
         this.subscriptions = new ArrayList<>();
-        this.poller = new Resilience4jReliableBatchPoller(poller);
+        this.poller = poller;
         this.pollingConfig = config.getPollingConfig();
         this.leaseConfig = config.getLeaseConfig();
     }
