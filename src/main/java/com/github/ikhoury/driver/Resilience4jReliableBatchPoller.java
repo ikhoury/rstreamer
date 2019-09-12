@@ -20,14 +20,15 @@ import static java.util.Collections.emptyList;
 public class Resilience4jReliableBatchPoller extends ReliableBatchPoller {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(Resilience4jReliableBatchPoller.class);
-    private static final int CIRCUIT_BREAKER_BUFFER_SIZE_MULTIPLIER = 3;
+    private static final int CIRCUIT_BREAKER_BUFFER_SIZE_MULTIPLIER = 5;
 
     private final CircuitBreaker circuitBreaker;
     private final Retry retry;
 
-    public Resilience4jReliableBatchPoller(RedisBatchPoller poller, ReliableBatchPollerConfig config) {
+    public Resilience4jReliableBatchPoller(RedisBatchPoller poller, ReliableBatchPollerConfig config, int subscriptionCount) {
         super(poller);
-        CircuitBreakerConfig circuitBreakerConfig = createCircuitBreakerConfig(config.getRetryAttempts(), config.getConnectionExceptionToleranceThreshold());
+        CircuitBreakerConfig circuitBreakerConfig = createCircuitBreakerConfig(config.getRetryAttempts(),
+                config.getConnectionExceptionToleranceThreshold(), subscriptionCount);
         RetryConfig retryConfig = createRetryConfig(config.getRetryAttempts());
         String simpleName = this.getClass().getSimpleName();
         this.circuitBreaker = CircuitBreaker.of(simpleName, circuitBreakerConfig);
@@ -65,12 +66,12 @@ public class Resilience4jReliableBatchPoller extends ReliableBatchPoller {
                 .decorate();
     }
 
-    private CircuitBreakerConfig createCircuitBreakerConfig(int retryAttempts, float connectionExceptionFailureThreshold) {
+    private CircuitBreakerConfig createCircuitBreakerConfig(int retryAttempts, float connectionExceptionFailureThreshold, int subscriptionCount) {
         return CircuitBreakerConfig.custom()
                 .recordExceptions(RedisConnectionException.class)
                 .failureRateThreshold(connectionExceptionFailureThreshold)
-                .ringBufferSizeInClosedState(retryAttempts * CIRCUIT_BREAKER_BUFFER_SIZE_MULTIPLIER)
-                .ringBufferSizeInHalfOpenState(retryAttempts)
+                .ringBufferSizeInClosedState(retryAttempts * subscriptionCount * CIRCUIT_BREAKER_BUFFER_SIZE_MULTIPLIER)
+                .ringBufferSizeInHalfOpenState(retryAttempts * subscriptionCount)
                 .build();
     }
 

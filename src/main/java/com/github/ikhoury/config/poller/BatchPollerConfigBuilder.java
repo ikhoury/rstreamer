@@ -5,7 +5,6 @@ public class BatchPollerConfigBuilder {
     private String host = "localhost";
     private int port = 6379;
     private int pollTimeoutInSeconds = 5;
-    private int subscriptionCount = 8;
 
     private BatchPollerConfigBuilder() {
 
@@ -30,12 +29,7 @@ public class BatchPollerConfigBuilder {
         return this;
     }
 
-    public BatchPollerConfigBuilder withSubscriptionCount(int subscriptionCount) {
-        this.subscriptionCount = subscriptionCount;
-        return this;
-    }
-
     public BatchPollerConfig build() {
-        return new BatchPollerConfig(host, port, pollTimeoutInSeconds, subscriptionCount);
+        return new BatchPollerConfig(host, port, pollTimeoutInSeconds);
     }
 }

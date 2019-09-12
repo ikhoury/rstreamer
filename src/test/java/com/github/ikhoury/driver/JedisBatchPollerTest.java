@@ -36,12 +36,13 @@ public class JedisBatchPollerTest {
     public void setUp() {
         String host = redis.getContainerIpAddress();
         int port = redis.getFirstMappedPort();
+        int subscriptionCount = 1;
         BatchPollerConfig batchPollerConfig = defaultBatchPollerConfig()
                 .withHost(host)
                 .withPort(port)
                 .withPollTimeoutInSeconds(SHORT_SECOND)
                 .build();
-        poller = new JedisBatchPoller(batchPollerConfig);
+        poller = new JedisBatchPoller(batchPollerConfig, subscriptionCount);
         redisTestDriver = new Jedis(host, port);
     }
 

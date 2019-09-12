@@ -20,8 +20,8 @@ public class JedisBatchPoller implements RedisBatchPoller {
     private final JedisPool jedisPool;
     private final int pollTimeoutInSeconds;
 
-    public JedisBatchPoller(BatchPollerConfig batchPollerConfig) {
-        GenericObjectPoolConfig config = configurePool(batchPollerConfig.getSubscriptionCount());
+    public JedisBatchPoller(BatchPollerConfig batchPollerConfig, int subscriptionCount) {
+        GenericObjectPoolConfig config = configurePool(subscriptionCount);
         this.jedisPool = new JedisPool(config, batchPollerConfig.getHost(), batchPollerConfig.getPort());
         this.pollTimeoutInSeconds = batchPollerConfig.getPollTimeoutInSeconds();
     }
