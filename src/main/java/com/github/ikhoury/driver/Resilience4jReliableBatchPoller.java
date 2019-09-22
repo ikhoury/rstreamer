@@ -11,6 +11,7 @@ import io.github.resilience4j.retry.RetryConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.time.Duration;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Supplier;
@@ -20,6 +21,7 @@ import static java.util.Collections.emptyList;
 public class Resilience4jReliableBatchPoller extends ReliableBatchPoller {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(Resilience4jReliableBatchPoller.class);
+    private static final Duration DURATION_IN_OPEN_STATE = Duration.ofMinutes(1);
 
     private final CircuitBreaker circuitBreaker;
     private final Retry retry;
@@ -72,6 +74,7 @@ public class Resilience4jReliableBatchPoller extends ReliableBatchPoller {
                 .failureRateThreshold(failureRateThreshold)
                 .ringBufferSizeInClosedState(retryAttempts * subscriptionCount * sampleCountMultiplier)
                 .ringBufferSizeInHalfOpenState(retryAttempts * subscriptionCount)
+                .waitDurationInOpenState(DURATION_IN_OPEN_STATE)
                 .build();
     }
 
