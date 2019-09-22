@@ -72,8 +72,8 @@ public class Resilience4jReliableBatchPoller extends ReliableBatchPoller {
         return CircuitBreakerConfig.custom()
                 .recordExceptions(RedisConnectionException.class)
                 .failureRateThreshold(failureRateThreshold)
-                .ringBufferSizeInClosedState(retryAttempts * subscriptionCount * sampleCountMultiplier)
-                .ringBufferSizeInHalfOpenState(retryAttempts * subscriptionCount)
+                .slidingWindowSize(retryAttempts * subscriptionCount * sampleCountMultiplier)
+                .permittedNumberOfCallsInHalfOpenState(retryAttempts * subscriptionCount)
                 .waitDurationInOpenState(DURATION_IN_OPEN_STATE)
                 .build();
     }
