@@ -9,7 +9,7 @@ Maven is used to build the project artefact. Run `mvn install` to have the artef
 
 ### Dependencies
 The library depends on resilience4j for reliably handling redis connection failures.
-Add the missing resilience4j dependencies to your pom as follows:
+Add the missing resilience4j dependencies to your pom as follows if you plan on using the `Resilience4jReliableBatchPoller` decorator:
 ```
 <dependency>
 	<groupId>io.github.resilience4j</groupId>
