@@ -5,19 +5,25 @@ import java.util.Objects;
 public class ReliableBatchPollerConfig {
 
     private int retryAttempts;
-    private float connectionExceptionToleranceThreshold;
+    private int sampleCountMultiplier;
+    private float failureRateThreshold;
 
-    ReliableBatchPollerConfig(int retryAttempts, float connectionExceptionToleranceThreshold) {
+    ReliableBatchPollerConfig(int retryAttempts, float failureRateThreshold, int sampleCountMultiplier) {
         this.retryAttempts = retryAttempts;
-        this.connectionExceptionToleranceThreshold = connectionExceptionToleranceThreshold;
+        this.failureRateThreshold = failureRateThreshold;
+        this.sampleCountMultiplier = sampleCountMultiplier;
     }
 
     public int getRetryAttempts() {
         return retryAttempts;
     }
 
-    public float getConnectionExceptionToleranceThreshold() {
-        return connectionExceptionToleranceThreshold;
+    public float getFailureRateThreshold() {
+        return failureRateThreshold;
+    }
+
+    public int getSampleCountMultiplier() {
+        return sampleCountMultiplier;
     }
 
     @Override
@@ -26,19 +32,21 @@ public class ReliableBatchPollerConfig {
         if (o == null || getClass() != o.getClass()) return false;
         ReliableBatchPollerConfig that = (ReliableBatchPollerConfig) o;
         return retryAttempts == that.retryAttempts &&
-                Float.compare(that.connectionExceptionToleranceThreshold, connectionExceptionToleranceThreshold) == 0;
+                sampleCountMultiplier == that.sampleCountMultiplier &&
+                Float.compare(that.failureRateThreshold, failureRateThreshold) == 0;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(retryAttempts, connectionExceptionToleranceThreshold);
+        return Objects.hash(retryAttempts, sampleCountMultiplier, failureRateThreshold);
     }
 
     @Override
     public String toString() {
         return "ReliableBatchPollerConfig{" +
                 "retryAttempts=" + retryAttempts +
-                ", connectionExceptionToleranceThreshold=" + connectionExceptionToleranceThreshold +
+                ", sampleCountMultiplier=" + sampleCountMultiplier +
+                ", failureRateThreshold=" + failureRateThreshold +
                 '}';
     }
 }

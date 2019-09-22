@@ -20,15 +20,14 @@ import static java.util.Collections.emptyList;
 public class Resilience4jReliableBatchPoller extends ReliableBatchPoller {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(Resilience4jReliableBatchPoller.class);
-    private static final int CIRCUIT_BREAKER_BUFFER_SIZE_MULTIPLIER = 5;
 
     private final CircuitBreaker circuitBreaker;
     private final Retry retry;
 
     public Resilience4jReliableBatchPoller(RedisBatchPoller poller, ReliableBatchPollerConfig config, int subscriptionCount) {
         super(poller);
-        CircuitBreakerConfig circuitBreakerConfig = createCircuitBreakerConfig(config.getRetryAttempts(),
-                config.getConnectionExceptionToleranceThreshold(), subscriptionCount);
+        CircuitBreakerConfig circuitBreakerConfig = createCircuitBreakerConfig(subscriptionCount, config.getRetryAttempts(),
+                config.getFailureRateThreshold(), config.getSampleCountMultiplier());
         RetryConfig retryConfig = createRetryConfig(config.getRetryAttempts());
         String simpleName = this.getClass().getSimpleName();
         this.circuitBreaker = CircuitBreaker.of(simpleName, circuitBreakerConfig);
@@ -66,11 +65,12 @@ public class Resilience4jReliableBatchPoller extends ReliableBatchPoller {
                 .decorate();
     }
 
-    private CircuitBreakerConfig createCircuitBreakerConfig(int retryAttempts, float connectionExceptionFailureThreshold, int subscriptionCount) {
+    private CircuitBreakerConfig createCircuitBreakerConfig(int subscriptionCount, int retryAttempts,
+                                                            float failureRateThreshold, int sampleCountMultiplier) {
         return CircuitBreakerConfig.custom()
                 .recordExceptions(RedisConnectionException.class)
-                .failureRateThreshold(connectionExceptionFailureThreshold)
-                .ringBufferSizeInClosedState(retryAttempts * subscriptionCount * CIRCUIT_BREAKER_BUFFER_SIZE_MULTIPLIER)
+                .failureRateThreshold(failureRateThreshold)
+                .ringBufferSizeInClosedState(retryAttempts * subscriptionCount * sampleCountMultiplier)
                 .ringBufferSizeInHalfOpenState(retryAttempts * subscriptionCount)
                 .build();
     }

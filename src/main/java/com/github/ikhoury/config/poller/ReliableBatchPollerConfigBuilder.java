@@ -3,7 +3,8 @@ package com.github.ikhoury.config.poller;
 public class ReliableBatchPollerConfigBuilder {
 
     private int retryAttempts = 3;
-    private float connectionExceptionToleranceThreshold = 50;
+    private int sampleCountMultiplier = 5;
+    private float failureRateThreshold = 50;
 
     private ReliableBatchPollerConfigBuilder() {
 
@@ -17,19 +18,30 @@ public class ReliableBatchPollerConfigBuilder {
         if (retryAttempts < 1) {
             throw new IllegalArgumentException("retryAttempts must be greater than or equal to 1");
         }
+
         this.retryAttempts = retryAttempts;
         return this;
     }
 
-    public ReliableBatchPollerConfigBuilder withConnectionExceptionToleranceThreshold(float connectionExceptionToleranceThreshold) {
-        if (connectionExceptionToleranceThreshold <= 0 || connectionExceptionToleranceThreshold > 100) {
-            throw new IllegalArgumentException("connectionExceptionToleranceThreshold must be between 1 and 100");
+    public ReliableBatchPollerConfigBuilder withFailureRateThreshold(float failureRateThreshold) {
+        if (failureRateThreshold <= 0 || failureRateThreshold > 100) {
+            throw new IllegalArgumentException("failureRateThreshold must be between 1 and 100");
         }
-        this.connectionExceptionToleranceThreshold = connectionExceptionToleranceThreshold;
+
+        this.failureRateThreshold = failureRateThreshold;
+        return this;
+    }
+
+    public ReliableBatchPollerConfigBuilder withSampleCountMultiplier(int sampleCountMultiplier) {
+        if (sampleCountMultiplier <= 0 || sampleCountMultiplier > 10) {
+            throw new IllegalArgumentException("sampleCountMultiplier must be between 1 and 10");
+        }
+
+        this.sampleCountMultiplier = sampleCountMultiplier;
         return this;
     }
 
     public ReliableBatchPollerConfig build() {
-        return new ReliableBatchPollerConfig(retryAttempts, connectionExceptionToleranceThreshold);
+        return new ReliableBatchPollerConfig(retryAttempts, failureRateThreshold, sampleCountMultiplier);
     }
 }
