@@ -22,9 +22,9 @@ Add the missing resilience4j dependencies to your pom as follows:
 	<version>${resilience4j.version}</version>
 </dependency>
 ```
-The library is built with version `0.17.0`. 
+The library is built with version `1.0.0`. 
 
-## Conecpts
+## Concepts
 A `WorkSubscription` describes a group of interested message handlers that want to process items from a redis queue.
 The subscription is activated using the `SubscriptionManager`. It runs background threads that poll for tasks and process them using workers.
 RStreamer is more efficient than regular polling using jedis because of the following:
