@@ -7,7 +7,7 @@ public class ReliableBatchPollerConfig {
     private int retryAttempts;
     private float connectionExceptionToleranceThreshold;
 
-    public ReliableBatchPollerConfig(int retryAttempts, float connectionExceptionToleranceThreshold) {
+    ReliableBatchPollerConfig(int retryAttempts, float connectionExceptionToleranceThreshold) {
         this.retryAttempts = retryAttempts;
         this.connectionExceptionToleranceThreshold = connectionExceptionToleranceThreshold;
     }
