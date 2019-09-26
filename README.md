@@ -8,8 +8,8 @@ The library uses https://github.com/xetorthio/jedis as its redis java driver in 
 Maven is used to build the project artefact. Run `mvn install` to have the artefact available in your local repostiory.
 
 ### Dependencies
-The library depends on resilience4j for reliably handling redis connection failures.
-Add the missing resilience4j dependencies to your pom as follows:
+The library depends on https://github.com/resilience4j/resilience4j for reliably handling redis connection failures.
+Add the missing resilience4j dependencies to your pom if you plan on using the `Resilience4jReliableBatchPoller` decorator:
 ```
 <dependency>
 	<groupId>io.github.resilience4j</groupId>
