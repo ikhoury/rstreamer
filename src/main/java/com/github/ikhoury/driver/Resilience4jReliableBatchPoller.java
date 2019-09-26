@@ -52,7 +52,7 @@ public class Resilience4jReliableBatchPoller extends ReliableBatchPoller {
         try {
             return supplier.get();
         } catch (RedisConnectionException connectionException) {
-            LOGGER.warn("Failed to poll for items. Trying again", connectionException);
+            LOGGER.warn("Failed to poll for items", connectionException);
         } catch (CallNotPermittedException ignore) {
 
         }
