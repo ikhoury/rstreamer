@@ -9,6 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Each {@code WorkSubscription} will have a {@code PollingThread} to service it.
@@ -17,6 +18,7 @@ import java.util.List;
 class SubscriptionRunner {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SubscriptionRunner.class);
+    private static final int HOLD_BACK_SECONDS_ON_EMPTY_RESULT = 1;
 
     private final WorkSubscription subscription;
     private final LeaseBroker leaseBroker;
@@ -73,6 +75,12 @@ class SubscriptionRunner {
                     }
 
                     leaseRunner.run(lease);
+                } else {
+                    try {
+                        TimeUnit.SECONDS.sleep(HOLD_BACK_SECONDS_ON_EMPTY_RESULT);
+                    } catch (InterruptedException e) {
+                        Thread.currentThread().interrupt();
+                    }
                 }
             }
 
