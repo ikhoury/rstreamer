@@ -41,17 +41,25 @@ To ensure graceful shutdown, call `deactivateSubscriptions()` before exiting you
 
 ## Configuration
 ### BatchPollerConfig
-`JedisBatchPoller` is configured using a `BatchPollerConfig`.
+A `RedisBatchPoller` is configured using a `BatchPollerConfig`.
 ```
 BatchPollerConfig batchPollerConfig = BatchPollerConfigBuilder.defaultBatchPollerConfig()
                 .withHost("myhost")
                 .withPort(6379)
-                .withSubscriptionCount(10)
                 .build();
 ```
 The default config assumes you are connecting to the default redis port on localhost.
 
-**Note:** The subscription count must be equal to the number of subscriptions activated in order to have enough resources for concurrently polling all queues.
+### ReliableBatchPollerConfig
+A `ReliableBatchPoller` is configured using a `ReliableBatchPollerConfig`.
+```
+ReliableBatchPollerConfig reliableBatchPollerConfig = defaultReliableBatchPollerConfig()
+        .withRetryAttempts(3)
+        .withFailureRateThreshold(70)
+        .build();
+```
+A sample of the operations are evaluated. If the sample's failure rate is above the set threshold,
+the circuit breaker will open for a while and stop the caller from making requests to an unresponsive server.
 
 ### SubscriptionManagerConfig
 `SubscriptionManager` is configured using `SubscriptionManagerConfig`.
@@ -75,7 +83,7 @@ The larger the number, the more tasks (or group of tasks) can be processed in pa
 #### PollingConfig
 It is more efficient to single poll than to batch poll a queue with very few items. Single polling uses redis's blocking operation and hence can wait on the server side until an item is inserted. On the other hand, batch polling will continuously try to fetch a list of items. Therefore, a `batchSizeThreshold` parameter is used to specify the minimum number of items that must be fetched in a batch in order to continue batch polling in the next round.
 
-## Usage: Sample snippets
+## Sample snippets
 ### Worker 
 ```
 public class SampleWorker implements Worker {
@@ -108,6 +116,27 @@ workers.add(new SampleWorker());
 workers.add(new SampleBatchWorker());
 WorkSubscription subscription = new WorkSubscription("my:task:queue", workers);
 ```
+
+### Batch Poller
+```
+BatchPollerConfig batchPollerConfig = defaultBatchPollerConfig()
+        .withHost("java-0")
+        .build();
+
+RedisBatchPoller batchPoller = new JedisBatchPoller(batchPollerConfig, subscriptionCount);
+```
+
+### Reliable Batch Poller
+```
+ReliableBatchPollerConfig reliableBatchPollerConfig = defaultReliableBatchPollerConfig()
+        .withRetryAttempts(3)
+        .withFailureRateThreshold(70)
+        .withSampleCountMultiplier(3)
+        .build();
+
+RedisBatchPoller reliableBatchPoller = new Resilience4jReliableBatchPoller(batchPoller, reliableBatchPollerConfig, subscriptionCount);
+```
+
 ### Subscription Manager
 ```
 SubscriptionManager subscriptionManager = new SubscriptionManager(createSubscriptionManagerConfig(), createRedisPoller());
