@@ -13,7 +13,7 @@
         <maven.release.version>2.5.3</maven.release.version>
 
         <jedis.version>3.1.0</jedis.version>
-        <slf4j.version>1.7.26</slf4j.version>
+        <slf4j.version>1.7.28</slf4j.version>
         <resilience4j.version>1.0.0</resilience4j.version>
 
         <junit.version>4.12</junit.version>
