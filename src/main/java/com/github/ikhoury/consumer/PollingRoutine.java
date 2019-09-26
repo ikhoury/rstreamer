@@ -1,6 +1,6 @@
 package com.github.ikhoury.consumer;
 
-import com.github.ikhoury.config.PollingConfig;
+import com.github.ikhoury.config.subsription.PollingConfig;
 import com.github.ikhoury.driver.RedisBatchPoller;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

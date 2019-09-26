@@ -1,8 +1,8 @@
 package com.github.ikhoury.consumer;
 
-import com.github.ikhoury.config.LeaseConfig;
-import com.github.ikhoury.config.PollingConfig;
-import com.github.ikhoury.config.SubscriptionManagerConfig;
+import com.github.ikhoury.config.subsription.LeaseConfig;
+import com.github.ikhoury.config.subsription.PollingConfig;
+import com.github.ikhoury.config.subsription.SubscriptionManagerConfig;
 import com.github.ikhoury.driver.RedisBatchPoller;
 import com.github.ikhoury.lease.LeaseBroker;
 import com.github.ikhoury.lease.LeaseRunner;

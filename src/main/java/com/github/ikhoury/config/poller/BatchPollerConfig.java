@@ -1,19 +1,17 @@
-package com.github.ikhoury.config;
+package com.github.ikhoury.config.poller;
 
 import java.util.Objects;
 
-public class JedisConfig {
+public class BatchPollerConfig {
 
     private String host;
     private int port;
     private int pollTimeoutInSeconds;
-    private int subscriptionCount;
 
-    JedisConfig(String host, int port, int pollTimeoutInSeconds, int subscriptionCount) {
+    BatchPollerConfig(String host, int port, int pollTimeoutInSeconds) {
         this.host = host;
         this.port = port;
         this.pollTimeoutInSeconds = pollTimeoutInSeconds;
-        this.subscriptionCount = subscriptionCount;
     }
 
     public String getHost() {
@@ -28,33 +26,28 @@ public class JedisConfig {
         return pollTimeoutInSeconds;
     }
 
-    public int getSubscriptionCount() {
-        return subscriptionCount;
-    }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        JedisConfig that = (JedisConfig) o;
+        BatchPollerConfig that = (BatchPollerConfig) o;
         return port == that.port &&
                 pollTimeoutInSeconds == that.pollTimeoutInSeconds &&
-                subscriptionCount == that.subscriptionCount &&
                 Objects.equals(host, that.host);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(host, port, pollTimeoutInSeconds, subscriptionCount);
+        return Objects.hash(host, port, pollTimeoutInSeconds);
     }
 
     @Override
     public String toString() {
-        return "JedisConfig{" +
+        return "BatchPollerConfig{" +
                 "host='" + host + '\'' +
                 ", port=" + port +
                 ", pollTimeoutInSeconds=" + pollTimeoutInSeconds +
-                ", subscriptionCount=" + subscriptionCount +
                 '}';
     }
 }

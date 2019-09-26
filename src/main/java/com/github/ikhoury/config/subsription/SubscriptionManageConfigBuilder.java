@@ -1,7 +1,7 @@
-package com.github.ikhoury.config;
+package com.github.ikhoury.config.subsription;
 
-import static com.github.ikhoury.config.LeaseConfigBuilder.defaultLeaseConfig;
-import static com.github.ikhoury.config.PollingConfigBuilder.defaultPollingConfig;
+import static com.github.ikhoury.config.subsription.LeaseConfigBuilder.defaultLeaseConfig;
+import static com.github.ikhoury.config.subsription.PollingConfigBuilder.defaultPollingConfig;
 
 public class SubscriptionManageConfigBuilder {
 

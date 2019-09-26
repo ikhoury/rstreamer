@@ -1,6 +1,6 @@
 package com.github.ikhoury.driver;
 
-import com.github.ikhoury.config.JedisConfig;
+import com.github.ikhoury.config.poller.BatchPollerConfig;
 import org.apache.commons.pool2.impl.GenericObjectPoolConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -8,6 +8,7 @@ import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.Response;
 import redis.clients.jedis.Transaction;
+import redis.clients.jedis.exceptions.JedisConnectionException;
 
 import java.util.List;
 import java.util.Optional;
@@ -19,14 +20,14 @@ public class JedisBatchPoller implements RedisBatchPoller {
     private final JedisPool jedisPool;
     private final int pollTimeoutInSeconds;
 
-    public JedisBatchPoller(JedisConfig jedisConfig) {
-        GenericObjectPoolConfig config = configurePool(jedisConfig.getSubscriptionCount());
-        this.jedisPool = new JedisPool(config, jedisConfig.getHost(), jedisConfig.getPort());
-        this.pollTimeoutInSeconds = jedisConfig.getPollTimeoutInSeconds();
+    public JedisBatchPoller(BatchPollerConfig batchPollerConfig, int subscriptionCount) {
+        GenericObjectPoolConfig config = configurePool(subscriptionCount);
+        this.jedisPool = new JedisPool(config, batchPollerConfig.getHost(), batchPollerConfig.getPort());
+        this.pollTimeoutInSeconds = batchPollerConfig.getPollTimeoutInSeconds();
     }
 
     @Override
-    public Optional<String> pollForSingleItemFrom(String queue) {
+    public Optional<String> pollForSingleItemFrom(String queue) throws RedisConnectionException {
         try (Jedis jedis = jedisPool.getResource()) {
             List<String> pollResult = jedis.blpop(pollTimeoutInSeconds, queue);
             if (pollResult != null) {
@@ -37,11 +38,13 @@ public class JedisBatchPoller implements RedisBatchPoller {
                 LOGGER.trace("No item found during last poll");
                 return Optional.empty();
             }
+        } catch (JedisConnectionException connectionException) {
+            throw new RedisConnectionException(connectionException);
         }
     }
 
     @Override
-    public List<String> pollForMultipleItemsFrom(String queue, int count) {
+    public List<String> pollForMultipleItemsFrom(String queue, int count) throws RedisConnectionException {
         try (Jedis jedis = jedisPool.getResource()) {
             Transaction transaction = jedis.multi();
             Response<List<String>> items = transaction.lrange(queue, 0, count - 1);
@@ -50,6 +53,8 @@ public class JedisBatchPoller implements RedisBatchPoller {
 
             LOGGER.info("Polled {} items from {}", items.get().size(), queue);
             return items.get();
+        } catch (JedisConnectionException connectionException) {
+            throw new RedisConnectionException(connectionException);
         }
     }
 
