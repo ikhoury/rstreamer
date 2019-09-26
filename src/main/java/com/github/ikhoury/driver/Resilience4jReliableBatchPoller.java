@@ -54,7 +54,7 @@ public class Resilience4jReliableBatchPoller extends ReliableBatchPoller {
         } catch (RedisConnectionException connectionException) {
             LOGGER.warn("Failed to poll for items", connectionException);
         } catch (CallNotPermittedException ignore) {
-
+            LOGGER.trace("Call not permitted by circuit breaker");
         }
 
         return emptyResult;
