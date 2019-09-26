@@ -144,7 +144,6 @@ RedisBatchPoller batchPoller = new JedisBatchPoller(batchPollerConfig, subscript
 ReliableBatchPollerConfig reliableBatchPollerConfig = defaultReliableBatchPollerConfig()
         .withRetryAttempts(3)
         .withFailureRateThreshold(70)
-        .withSampleCountMultiplier(3)
         .build();
 
 RedisBatchPoller reliableBatchPoller = new Resilience4jReliableBatchPoller(batchPoller, reliableBatchPollerConfig, subscriptionCount);
