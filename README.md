@@ -35,7 +35,7 @@ Add the missing resilience4j dependencies to your project's pom if you plan on u
 	<version>${resilience4j.version}</version>
 </dependency>
 ```
-The library is built with version `1.0.0`. 
+The library is built with version `1.1.0`. 
 
 ## Concepts
 A `WorkSubscription` describes a group of interested message handlers that want to process items from a redis queue.
