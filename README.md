@@ -1,5 +1,6 @@
 # Rstreamer: Redis work queue processor
 [![CircleCI](https://circleci.com/gh/ikhoury/rstreamer/tree/master.svg?style=svg)](https://circleci.com/gh/ikhoury/rstreamer/tree/master)
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/1e48d9028c014a8aafda3f9d8394239c)](https://www.codacy.com/manual/i_kh/rstreamer?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=ikhoury/rstreamer&amp;utm_campaign=Badge_Grade)
 
 This library can be used to implement applications that need to process messages from redis queues.
 
