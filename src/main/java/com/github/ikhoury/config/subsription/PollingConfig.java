@@ -4,8 +4,8 @@ import java.util.Objects;
 
 public class PollingConfig {
 
-    private int batchSize;
-    private int batchSizeThreshold;
+    private final int batchSize;
+    private final int batchSizeThreshold;
 
     PollingConfig(int batchSize, int batchSizeThreshold) {
         this.batchSize = batchSize;

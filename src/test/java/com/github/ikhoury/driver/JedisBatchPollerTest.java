@@ -26,7 +26,7 @@ public class JedisBatchPollerTest {
     private static final int NUMBER_OF_MULTIPLE_ITEMS = MULTIPLE_ITEMS.length;
 
     @Rule
-    public GenericContainer redis = new GenericContainer<>("redis:5.0.5-alpine")
+    public final GenericContainer redis = new GenericContainer<>("redis:5.0.5-alpine")
             .withExposedPorts(6379);
 
     private JedisBatchPoller poller;

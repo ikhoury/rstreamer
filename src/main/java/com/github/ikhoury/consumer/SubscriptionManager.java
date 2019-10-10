@@ -26,12 +26,12 @@ public class SubscriptionManager {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SubscriptionManager.class);
 
-    private RedisBatchPoller poller;
-    private PollingConfig pollingConfig;
-    private LeaseConfig leaseConfig;
+    private final RedisBatchPoller poller;
+    private final PollingConfig pollingConfig;
+    private final LeaseConfig leaseConfig;
 
-    private Collection<WorkSubscription> subscriptions;
-    private Collection<SubscriptionRunner> subscriptionRunners;
+    private final Collection<WorkSubscription> subscriptions;
+    private final Collection<SubscriptionRunner> subscriptionRunners;
 
     public SubscriptionManager(SubscriptionManagerConfig config, RedisBatchPoller poller) {
         this.subscriptionRunners = new ArrayList<>();

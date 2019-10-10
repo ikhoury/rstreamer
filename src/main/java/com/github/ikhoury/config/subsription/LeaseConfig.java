@@ -4,7 +4,7 @@ import java.util.Objects;
 
 public class LeaseConfig {
 
-    private int maxActiveLeases;
+    private final int maxActiveLeases;
 
     public LeaseConfig(int maxActiveLeases) {
         this.maxActiveLeases = maxActiveLeases;

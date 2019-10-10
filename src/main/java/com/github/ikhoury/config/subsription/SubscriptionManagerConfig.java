@@ -4,8 +4,8 @@ import java.util.Objects;
 
 public class SubscriptionManagerConfig {
 
-    private LeaseConfig leaseConfig;
-    private PollingConfig pollingConfig;
+    private final LeaseConfig leaseConfig;
+    private final PollingConfig pollingConfig;
 
     SubscriptionManagerConfig(LeaseConfig leaseConfig, PollingConfig pollingConfig) {
         this.leaseConfig = leaseConfig;

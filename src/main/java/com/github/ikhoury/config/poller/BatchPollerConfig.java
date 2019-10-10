@@ -4,9 +4,9 @@ import java.util.Objects;
 
 public class BatchPollerConfig {
 
-    private String host;
-    private int port;
-    private int pollTimeoutInSeconds;
+    private final String host;
+    private final int port;
+    private final int pollTimeoutInSeconds;
 
     BatchPollerConfig(String host, int port, int pollTimeoutInSeconds) {
         this.host = host;

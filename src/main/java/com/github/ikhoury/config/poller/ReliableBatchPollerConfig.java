@@ -4,9 +4,9 @@ import java.util.Objects;
 
 public class ReliableBatchPollerConfig {
 
-    private int retryAttempts;
-    private int sampleCountMultiplier;
-    private float failureRateThreshold;
+    private final int retryAttempts;
+    private final int sampleCountMultiplier;
+    private final float failureRateThreshold;
 
     ReliableBatchPollerConfig(int retryAttempts, float failureRateThreshold, int sampleCountMultiplier) {
         this.retryAttempts = retryAttempts;

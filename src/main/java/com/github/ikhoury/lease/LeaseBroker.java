@@ -16,7 +16,7 @@ public class LeaseBroker {
 
     private final Semaphore leaseStore;
     private final int maxActiveLeases;
-    private String queue;
+    private final String queue;
 
     public LeaseBroker(LeaseConfig leaseConfig, String queue) {
         this.maxActiveLeases = leaseConfig.getMaxActiveLeases();
