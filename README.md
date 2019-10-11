@@ -1,41 +1,11 @@
 # Rstreamer: Redis work queue processor
 [![CircleCI](https://circleci.com/gh/ikhoury/rstreamer/tree/master.svg?style=svg)](https://circleci.com/gh/ikhoury/rstreamer/tree/master)
+[![CodeFactor](https://www.codefactor.io/repository/github/ikhoury/rstreamer/badge)](https://www.codefactor.io/repository/github/ikhoury/rstreamer)
 
 This library can be used to implement applications that need to process messages from redis queues.
 
 ## Setup
 Maven is used to build the project artefact. Run `mvn install` to have the artefact available in your local repostiory.
-
-### Dependencies
-#### Jedis
-The library uses https://github.com/xetorthio/jedis as its redis java driver in `JedisBatchPoller`.
-Add the missing jedis dependency to your project's pom:
-
-```
-<dependency>
-    <groupId>redis.clients</groupId>
-    <artifactId>jedis</artifactId>
-    <version>${jedis.version}</version>
-</dependency>
-```
-The library is built wih version `3.1.0`.
-
-#### Resilience4j
-The library depends on https://github.com/resilience4j/resilience4j for reliably handling redis connection failures.
-Add the missing resilience4j dependencies to your project's pom if you plan on using the `Resilience4jReliableBatchPoller` decorator:
-```
-<dependency>
-	<groupId>io.github.resilience4j</groupId>
-	<artifactId>resilience4j-circuitbreaker</artifactId>
-	<version>${resilience4j.version}</version>
-</dependency>
-<dependency>
-	<groupId>io.github.resilience4j</groupId>
-	<artifactId>resilience4j-retry</artifactId>
-	<version>${resilience4j.version}</version>
-</dependency>
-```
-The library is built with version `1.1.0`. 
 
 ## Concepts
 A `WorkSubscription` describes a group of interested message handlers that want to process items from a redis queue.
