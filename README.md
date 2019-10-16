@@ -1,6 +1,5 @@
 # Rstreamer: Redis work queue processor
 [![CircleCI](https://circleci.com/gh/ikhoury/rstreamer/tree/master.svg?style=svg)](https://circleci.com/gh/ikhoury/rstreamer/tree/master)
-[![CodeFactor](https://www.codefactor.io/repository/github/ikhoury/rstreamer/badge)](https://www.codefactor.io/repository/github/ikhoury/rstreamer)
 
 This library can be used to implement applications that need to process messages from redis queues.
 
