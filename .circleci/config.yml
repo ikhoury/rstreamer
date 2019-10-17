@@ -2,7 +2,6 @@ version: 2
 executorType: machine
 jobs:
   build:
-    context: SonarCloud
     working_directory: ~/repo
 
     steps:
@@ -24,4 +23,5 @@ jobs:
 
       - run:
           name: Commit stage analysis
+          context: SonarCloud
           command: mvn verify -B sonar:sonar -Dsonar.projectKey=ikhoury_rstreamer -Dsonar.organization=ikhoury -Dsonar.host.url=https://sonarcloud.io
