@@ -1,16 +1,12 @@
 version: 2.1
 
-orbs:
-  sonarcloud: sonarsource/sonarcloud@1.0.0
-
 jobs:
   commit_stage:
     machine:
       image: circleci/classic:latest
     steps:
       - checkout
-      - run: mvn install -B
-      - sonarcloud/scan
+      - run: mvn verify -B sonar:sonar -Dsonar.projectKey=ikhoury_rstreamer -Dsonar.organization=ikhoury -Dsonar.host.url=https://sonarcloud.io
 
 workflows:
   main:
