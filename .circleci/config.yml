@@ -7,7 +7,7 @@ jobs:
     steps:
       - checkout
       - run:
-          name: Maven build and Sonar analysis
+          name: Maven build & Sonar analysis
           command: mvn verify -B sonar:sonar -Dsonar.projectKey=ikhoury_rstreamer -Dsonar.organization=ikhoury -Dsonar.host.url=https://sonarcloud.io
 
 workflows:
