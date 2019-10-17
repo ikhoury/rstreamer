@@ -9,13 +9,14 @@ jobs:
       - restore_cache:
           keys:
             # when lock file changes, use increasingly general patterns to restore cache
-            - maven-repo-v1-{{ .Branch }}-{{ checksum "pom.xml" }}
-            - maven-repo-v1-{{ .Branch }}-
-            - maven-repo-v1-
+            - maven-repo-rstreamer-{{ .Branch }}-{{ checksum "pom.xml" }}
+            - maven-repo-rstreamer-{{ .Branch }}-
+            - maven-repo-rstreamer-
+      - run: mvn dependency:go-offline
       - save_cache:
           paths:
             - ~/.m2
-          key: maven-repo-v1-{{ .Branch }}-{{ checksum "pom.xml" }}
+          key: maven-repo-rstreamer-{{ .Branch }}-{{ checksum "pom.xml" }}
       - run:
           name: Maven build & Sonar analysis
           command: mvn verify -B sonar:sonar -Dsonar.projectKey=ikhoury_rstreamer -Dsonar.organization=ikhoury -Dsonar.host.url=https://sonarcloud.io
