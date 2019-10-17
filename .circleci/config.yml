@@ -1,13 +1,17 @@
 version: 2.1
+
 orbs:
   sonarcloud: sonarsource/sonarcloud@1.0.0
+
 jobs:
-  executor: machine
   commit_stage:
+    machine:
+      image: circleci/classic:latest
     steps:
       - checkout
       - run: mvn install -B
       - sonarcloud/scan
+
 workflows:
   main:
     jobs:
