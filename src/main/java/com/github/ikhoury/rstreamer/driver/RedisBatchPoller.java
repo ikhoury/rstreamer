@@ -11,7 +11,7 @@ public interface RedisBatchPoller {
      * @return An item if present.
      * @throws RedisConnectionException When a connection error with redis occurs
      */
-    Optional<String> pollForSingleItemFrom(String queue) throws RedisConnectionException;
+    Optional<String> pollForSingleItemFrom(String queue);
 
     /**
      * Attempts to fetch a batch of items from the queue.
@@ -20,5 +20,5 @@ public interface RedisBatchPoller {
      * @return A list of items from the queue.
      * @throws RedisConnectionException When a connection error with redis occurs
      */
-    List<String> pollForMultipleItemsFrom(String queue, int count) throws RedisConnectionException;
+    List<String> pollForMultipleItemsFrom(String queue, int count);
 }

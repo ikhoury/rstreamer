@@ -10,6 +10,10 @@ public class RandomOutcome {
     private static final Random RANDOM = new Random();
     private static final int MAGIC_NUMBER = 42;
 
+    private RandomOutcome() {
+
+    }
+
     public static boolean randomBooleanOutcome() {
         return RANDOM.nextBoolean() && RANDOM.nextInt(MAGIC_NUMBER + 1) == MAGIC_NUMBER;
     }
