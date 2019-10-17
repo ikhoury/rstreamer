@@ -27,7 +27,7 @@ public class JedisBatchPoller implements RedisBatchPoller {
     }
 
     @Override
-    public Optional<String> pollForSingleItemFrom(String queue) throws RedisConnectionException {
+    public Optional<String> pollForSingleItemFrom(String queue) {
         try (Jedis jedis = jedisPool.getResource()) {
             List<String> pollResult = jedis.blpop(pollTimeoutInSeconds, queue);
             if (pollResult != null) {
@@ -44,10 +44,11 @@ public class JedisBatchPoller implements RedisBatchPoller {
     }
 
     @Override
-    public List<String> pollForMultipleItemsFrom(String queue, int count) throws RedisConnectionException {
+    public List<String> pollForMultipleItemsFrom(String queue, int count) {
         try (Jedis jedis = jedisPool.getResource()) {
             Transaction transaction = jedis.multi();
-            Response<List<String>> items = transaction.lrange(queue, 0, count - 1);
+            long endIndex = count - 1L;
+            Response<List<String>> items = transaction.lrange(queue, 0, endIndex);
             transaction.ltrim(queue, count, -1);
             transaction.exec();
 
