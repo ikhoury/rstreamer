@@ -35,8 +35,8 @@ public class LeaseRunner {
         executor.execute(() -> {
             try {
                 lease.getTask().run();
-            } catch (Throwable throwable) {
-                LOGGER.error("Failed to run lease for {}", queue, throwable);
+            } catch (Exception exception) {
+                LOGGER.error("Failed to run lease for {}", queue, exception);
             } finally {
                 leaseBroker.returnLease(lease);
             }
