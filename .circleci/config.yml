@@ -1,19 +1,15 @@
 version: 2.1
 orbs:
   sonarcloud: sonarsource/sonarcloud@1.0.0
-executorType: machine
 jobs:
-  build:
-    working_directory: ~/repo
-
+  executor: machine
+  commit_stage:
     steps:
       - checkout
-      - run:
-          name: Commit stage
-          command: mvn install -B
+      - run: mvn install -B
       - sonarcloud/scan
 workflows:
   main:
     jobs:
-      - build:
+      - commit_stage:
           context: SonarCloud
