@@ -12,6 +12,7 @@ jobs:
             - maven-repo-v1-{{ .Branch }}-{{ checksum "pom.xml" }}
             - maven-repo-v1-{{ .Branch }}-
             - maven-repo-v1-
+      - run: mvn dependency:go-offline
       - save_cache:
           paths:
             - ~/.m2
