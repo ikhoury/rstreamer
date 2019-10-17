@@ -5,19 +5,19 @@ import java.util.Optional;
 
 public abstract class ReliableBatchPoller implements RedisBatchPoller {
 
-    final RedisBatchPoller poller;
+    private final RedisBatchPoller poller;
 
     ReliableBatchPoller(RedisBatchPoller poller) {
         this.poller = poller;
     }
 
     @Override
-    public Optional<String> pollForSingleItemFrom(String queue) throws RedisConnectionException {
+    public Optional<String> pollForSingleItemFrom(String queue) {
         return poller.pollForSingleItemFrom(queue);
     }
 
     @Override
-    public List<String> pollForMultipleItemsFrom(String queue, int count) throws RedisConnectionException {
+    public List<String> pollForMultipleItemsFrom(String queue, int count) {
         return poller.pollForMultipleItemsFrom(queue, count);
     }
 }

@@ -50,7 +50,7 @@ class PollingRoutine {
     }
 
     private boolean shouldBatchPollBasedOnSizeOf(List<String> items) {
-        return !(items.size() < batchSizeThreshold);
+        return items.size() >= batchSizeThreshold;
     }
 
     private boolean shouldBatchPollBasedOnRandomOutcome() {

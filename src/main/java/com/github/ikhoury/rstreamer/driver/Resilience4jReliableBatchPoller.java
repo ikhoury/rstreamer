@@ -37,13 +37,13 @@ public class Resilience4jReliableBatchPoller extends ReliableBatchPoller {
     }
 
     @Override
-    public Optional<String> pollForSingleItemFrom(String queue) throws RedisConnectionException {
+    public Optional<String> pollForSingleItemFrom(String queue) {
         Supplier<Optional<String>> reliableSupplier = decorateSupplier(() -> super.pollForSingleItemFrom(queue));
         return getResultOrReturnEmpty(reliableSupplier, Optional.empty());
     }
 
     @Override
-    public List<String> pollForMultipleItemsFrom(String queue, int count) throws RedisConnectionException {
+    public List<String> pollForMultipleItemsFrom(String queue, int count) {
         Supplier<List<String>> reliableSupplier = decorateSupplier(() -> super.pollForMultipleItemsFrom(queue, count));
         return getResultOrReturnEmpty(reliableSupplier, emptyList());
     }
