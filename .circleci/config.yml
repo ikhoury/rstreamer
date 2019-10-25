@@ -12,7 +12,9 @@ jobs:
             - maven-repo-rstreamer-{{ .Branch }}-{{ checksum "pom.xml" }}
             - maven-repo-rstreamer-{{ .Branch }}-
             - maven-repo-rstreamer-
-      - run: mvn dependency:resolve-plugins dependency:go-offline
+      - run:
+          name: Fetching dependencies
+          command: mvn dependency:go-offline
       - save_cache:
           paths:
             - ~/.m2
