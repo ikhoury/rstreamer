@@ -12,7 +12,9 @@ jobs:
             - maven-repo-rstreamer-{{ .Branch }}-{{ checksum "pom.xml" }}
             - maven-repo-rstreamer-{{ .Branch }}-
             - maven-repo-rstreamer-
-      - run: mvn dependency:go-offline
+      - run:
+          name: Fetching dependencies
+          command: mvn dependency:go-offline
       - save_cache:
           paths:
             - ~/.m2
@@ -20,9 +22,33 @@ jobs:
       - run:
           name: Maven build & Sonar analysis
           command: mvn verify -B sonar:sonar -Dsonar.projectKey=ikhoury_rstreamer -Dsonar.organization=ikhoury -Dsonar.host.url=https://sonarcloud.io
+      - store_test_results:
+          path: target/surefire-reports
+
+  publish_artifact:
+    machine:
+      image: circleci/classic:latest
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            # when lock file changes, use increasingly general patterns to restore cache
+            - maven-repo-rstreamer-{{ .Branch }}-{{ checksum "pom.xml" }}
+            - maven-repo-rstreamer-{{ .Branch }}-
+            - maven-repo-rstreamer-
+      - run:
+          name: Create and publish artifact
+          command: mvn -s .circleci/settings.xml -DskipTests deploy
 
 workflows:
   main:
     jobs:
       - commit_stage:
           context: SonarCloud
+      - publish_artifact:
+          context: GitHub
+          requires:
+            - commit_stage
+          filters:
+            branches:
+              only: master

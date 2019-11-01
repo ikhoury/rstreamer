@@ -9,9 +9,11 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
+        <java.version>8</java.version>
         <maven.compiler.version>3.8.1</maven.compiler.version>
         <maven.release.version>2.5.3</maven.release.version>
         <jacoco.version>0.8.5</jacoco.version>
+        <sonar.version>3.7.0.1746</sonar.version>
 
         <jedis.version>3.1.0</jedis.version>
         <slf4j.version>1.7.29</slf4j.version>
@@ -84,7 +86,15 @@
     <scm>
         <developerConnection>scm:git:ssh://git@github.com/ikhoury/rstreamer</developerConnection>
       <tag>HEAD</tag>
-  </scm>
+    </scm>
+
+    <distributionManagement>
+        <repository>
+            <id>github</id>
+            <name>Github Maven Package Registry</name>
+            <url>https://maven.pkg.github.com/ikhoury/rstreamer</url>
+        </repository>
+    </distributionManagement>
 
     <build>
         <plugins>
@@ -93,8 +103,8 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>${maven.compiler.version}</version>
                 <configuration>
-                    <source>8</source>
-                    <target>8</target>
+                    <source>${java.version}</source>
+                    <target>${java.version}</target>
                 </configuration>
             </plugin>
             <plugin>
@@ -115,7 +125,6 @@
                             <goal>prepare-agent</goal>
                         </goals>
                     </execution>
-                    <!-- attached to Maven test phase -->
                     <execution>
                         <id>report</id>
                         <phase>test</phase>
@@ -124,6 +133,11 @@
                         </goals>
                     </execution>
                 </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.sonarsource.scanner.maven</groupId>
+                <artifactId>sonar-maven-plugin</artifactId>
+                <version>${sonar.version}</version>
             </plugin>
         </plugins>
     </build>
