@@ -49,6 +49,6 @@ workflows:
           context: GitHub
           requires:
             - commit_stage
-#          filters:
-#            branches:
-#              only: master
+          filters:
+            branches:
+              only: master
