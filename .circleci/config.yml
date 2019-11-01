@@ -39,16 +39,38 @@ jobs:
       - run:
           name: Create and publish artifact
           command: mvn -s .circleci/settings.xml -DskipTests deploy
+  publish_release:
+    machine:
+      image: circleci/classic:latest
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            # when lock file changes, use increasingly general patterns to restore cache
+            - maven-repo-rstreamer-{{ .Branch }}-{{ checksum "pom.xml" }}
+            - maven-repo-rstreamer-{{ .Branch }}-
+            - maven-repo-rstreamer-
+      - run:
+          name: Prepare & publish release artifact
+          command: mvn release:prepare release:perform
 
 workflows:
-  main:
+  #  main:
+  #    jobs:
+  #      - commit_stage:
+  #          context: SonarCloud
+  #      - publish_artifact:
+  #          context: GitHub
+  #          requires:
+  #            - commit_stage
+  #          filters:
+  #            branches:
+  #              only: master
+  release:
     jobs:
-      - commit_stage:
-          context: SonarCloud
-      - publish_artifact:
-          context: GitHub
-          requires:
-            - commit_stage
-          filters:
-            branches:
-              only: master
+      - publish_release
+#          filters:
+#            branches:
+#              only: master
+#            tags:
+#              only: /^v.*/
