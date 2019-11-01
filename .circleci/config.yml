@@ -38,7 +38,7 @@ jobs:
             - maven-repo-rstreamer-
       - run:
           name: Create and publish artifact
-          command: mvn -s .circleci/settings.xml -DskipTests deploy
+          command: mvn -B -s .circleci/settings.xml -DskipTests deploy
 
 workflows:
   main:
