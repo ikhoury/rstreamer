@@ -48,6 +48,6 @@ workflows:
       - publish_artifact:
           requires:
             - commit_stage
-          filters:
-            branches:
-              only: master
+#          filters:
+#            branches:
+#              only: master
