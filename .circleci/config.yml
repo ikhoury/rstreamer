@@ -26,23 +26,19 @@ jobs:
           path: target/surefire-reports
 
   publish_artifact:
-    - checkout
-    - restore_cache:
-        keys:
-          # when lock file changes, use increasingly general patterns to restore cache
-          - maven-repo-rstreamer-{{ .Branch }}-{{ checksum "pom.xml" }}
-          - maven-repo-rstreamer-{{ .Branch }}-
-          - maven-repo-rstreamer-
-    - run:
-        name: Fetching dependencies
-        command: mvn dependency:go-offline
-    - save_cache:
-        paths:
-          - ~/.m2
-        key: maven-repo-rstreamer-{{ .Branch }}-{{ checksum "pom.xml" }}
-    - run:
-        name: Create and publish artifact
-        command: mvn -s .circleci/settings.xml -DskipTests deploy
+    machine:
+      image: circleci/classic:latest
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            # when lock file changes, use increasingly general patterns to restore cache
+            - maven-repo-rstreamer-{{ .Branch }}-{{ checksum "pom.xml" }}
+            - maven-repo-rstreamer-{{ .Branch }}-
+            - maven-repo-rstreamer-
+      - run:
+          name: Create and publish artifact
+          command: mvn -s .circleci/settings.xml -DskipTests deploy
 
 workflows:
   main:
