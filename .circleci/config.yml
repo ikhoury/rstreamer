@@ -46,6 +46,7 @@ workflows:
       - commit_stage:
           context: SonarCloud
       - publish_artifact:
+          context: GitHub
           requires:
             - commit_stage
 #          filters:
