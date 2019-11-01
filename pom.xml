@@ -4,7 +4,7 @@
 
     <groupId>com.github.ikhoury</groupId>
     <artifactId>rstreamer</artifactId>
-    <version>0.3.0</version>
+    <version>0.3.0-SNAPSHOT</version>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -85,7 +85,7 @@
 
     <scm>
         <developerConnection>scm:git:ssh://git@github.com/ikhoury/rstreamer</developerConnection>
-      <tag>v0.3.0</tag>
+      <tag>HEAD</tag>
     </scm>
 
     <distributionManagement>
