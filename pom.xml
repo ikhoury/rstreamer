@@ -11,6 +11,7 @@
     <description>
         This library can be used to implement applications that need to process messages from redis queues.
     </description>
+    <url>https://github.com/ikhoury/rstreamer</url>
 
     <licenses>
         <license>
@@ -112,6 +113,7 @@
     <scm>
         <developerConnection>scm:git:ssh://git@github.com/ikhoury/rstreamer</developerConnection>
         <tag>HEAD</tag>
+        <url>https://github.com/ikhoury/rstreamer</url>
     </scm>
 
     <distributionManagement>
