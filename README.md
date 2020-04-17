@@ -1,6 +1,7 @@
 # Rstreamer: Redis work queue processor
 [![CircleCI](https://circleci.com/gh/ikhoury/rstreamer/tree/master.svg?style=svg)](https://circleci.com/gh/ikhoury/rstreamer/tree/master)
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=ikhoury_rstreamer&metric=alert_status)](https://sonarcloud.io/dashboard?id=ikhoury_rstreamer)
+[![Maven Central](https://img.shields.io/maven-central/v/com.github.ikhoury/rstreamer.svg?label=Maven%20Central)](https://search.maven.org/search?q=g:%22com.github.ikhoury%22%20AND%20a:%22rstreamer%22)
 
 This library can be used to implement applications that need to process messages from redis queues.
 
