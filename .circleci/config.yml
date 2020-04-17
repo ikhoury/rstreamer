@@ -37,6 +37,9 @@ jobs:
             - maven-repo-rstreamer-{{ .Branch }}-
             - maven-repo-rstreamer-
       - run:
+          name: Import GPG Key
+          command: echo -e "$GPG_KEY" | gpg --import
+      - run:
           name: Create and publish artifact
           command: mvn -B -s .circleci/settings.xml -DskipTests deploy
 
