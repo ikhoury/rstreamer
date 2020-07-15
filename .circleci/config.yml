@@ -8,8 +8,9 @@ jobs:
     machine:
       image: circleci/classic:latest
     steps:
-      - openjdk-install:
-          version: 11
+      - run:
+          name: Install JDK 11
+          command: sudo apt-get install openjdk-11-jdk -y
       - checkout
       - restore_cache:
           keys:
