@@ -5,13 +5,13 @@ jobs:
     machine:
       image: circleci/classic:latest
     steps:
+      - checkout
       - run:
           name: Install JDK 11
           command: sudo apt-get update && sudo apt-get install openjdk-11-jdk -y
       - run:
           name: Set Java Home
           command: echo "JAVA_HOME=/usr/lib/jvm/java-11-openjdk-amd64/" >> sudo /etc/environment && source /etc/environment
-      - checkout
       - restore_cache:
           keys:
             # when lock file changes, use increasingly general patterns to restore cache
@@ -35,13 +35,13 @@ jobs:
     machine:
       image: circleci/classic:latest
     steps:
+      - checkout
       - run:
           name: Install JDK 11
           command: sudo apt-get update && sudo apt-get install openjdk-11-jdk -y
       - run:
           name: Set Java Home
           command: echo "JAVA_HOME=/usr/lib/jvm/java-11-openjdk-amd64/" >> sudo /etc/environment && source /etc/environment
-      - checkout
       - restore_cache:
           keys:
             # when lock file changes, use increasingly general patterns to restore cache
