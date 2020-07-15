@@ -7,7 +7,7 @@ jobs:
     steps:
       - run:
           name: Install JDK 11
-          command: sudo apt-get install openjdk-11-jdk -y
+          command: sudo apt-get update && apt-get install openjdk-11-jdk -y
       - checkout
       - restore_cache:
           keys:
