@@ -1,10 +1,15 @@
 version: 2.1
 
+orbs:
+  openjdk-install: cloudesire/openjdk-install@1.2.3
+
 jobs:
   build:
     machine:
       image: circleci/classic:latest
     steps:
+      - openjdk-install:
+          version: 11
       - checkout
       - restore_cache:
           keys:
