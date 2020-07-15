@@ -9,9 +9,6 @@ jobs:
       - run:
           name: Install JDK 11
           command: sudo apt-get update && sudo apt-get install openjdk-11-jdk -y
-      - run:
-          name: Set Java Home
-          command: echo "JAVA_HOME=/usr/lib/jvm/java-11-openjdk-amd64/" >> sudo /etc/environment && source /etc/environment
       - restore_cache:
           keys:
             # when lock file changes, use increasingly general patterns to restore cache
@@ -20,14 +17,14 @@ jobs:
             - maven-repo-rstreamer-
       - run:
           name: Fetching dependencies
-          command: ./mvnw dependency:go-offline
+          command: JAVA_HOME=/usr/lib/jvm/java-11-openjdk-amd64/ ./mvnw dependency:go-offline
       - save_cache:
           paths:
             - ~/.m2
           key: maven-repo-rstreamer-{{ .Branch }}-{{ checksum "pom.xml" }}
       - run:
           name: Maven build & Sonar analysis
-          command: ./mvnw verify -B sonar:sonar -Dsonar.projectKey=ikhoury_rstreamer -Dsonar.organization=ikhoury -Dsonar.host.url=https://sonarcloud.io
+          command: JAVA_HOME=/usr/lib/jvm/java-11-openjdk-amd64/ ./mvnw verify -B sonar:sonar -Dsonar.projectKey=ikhoury_rstreamer -Dsonar.organization=ikhoury -Dsonar.host.url=https://sonarcloud.io
       - store_test_results:
           path: target/surefire-reports
 
@@ -39,9 +36,6 @@ jobs:
       - run:
           name: Install JDK 11
           command: sudo apt-get update && sudo apt-get install openjdk-11-jdk -y
-      - run:
-          name: Set Java Home
-          command: echo "JAVA_HOME=/usr/lib/jvm/java-11-openjdk-amd64/" >> sudo /etc/environment && source /etc/environment
       - restore_cache:
           keys:
             # when lock file changes, use increasingly general patterns to restore cache
@@ -49,11 +43,14 @@ jobs:
             - maven-repo-rstreamer-{{ .Branch }}-
             - maven-repo-rstreamer-
       - run:
+          name: Fetching dependencies
+          command: JAVA_HOME=/usr/lib/jvm/java-11-openjdk-amd64/ ./mvnw dependency:go-offline
+      - run:
           name: Import GPG Key
           command: echo -e "$GPG_KEY" | gpg --import
       - run:
           name: Create and publish artifact
-          command: ./mvnw -B -s .circleci/settings.xml -P release -DskipTests deploy
+          command: JAVA_HOME=/usr/lib/jvm/java-11-openjdk-amd64/ ./mvnw -B -s .circleci/settings.xml -P release -DskipTests deploy
 
 workflows:
   main:
