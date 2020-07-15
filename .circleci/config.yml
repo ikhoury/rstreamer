@@ -8,6 +8,9 @@ jobs:
       - run:
           name: Install JDK 11
           command: sudo apt-get update && sudo apt-get install openjdk-11-jdk -y
+      - run:
+          name: Set Java Home
+          command: sudo echo "JAVA_HOME=/usr/lib/jvm/java-11-openjdk-amd64/" >> /etc/environment && source /etc/environment
       - checkout
       - restore_cache:
           keys:
@@ -32,6 +35,12 @@ jobs:
     machine:
       image: circleci/classic:latest
     steps:
+      - run:
+          name: Install JDK 11
+          command: sudo apt-get update && sudo apt-get install openjdk-11-jdk -y
+      - run:
+          name: Set Java Home
+          command: sudo echo "JAVA_HOME=/usr/lib/jvm/java-11-openjdk-amd64/" >> /etc/environment && source /etc/environment
       - checkout
       - restore_cache:
           keys:
