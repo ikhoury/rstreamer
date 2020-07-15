@@ -1,11 +1,14 @@
 version: 2.1
 
 jobs:
-  commit_stage:
+  build:
     machine:
       image: circleci/classic:latest
     steps:
       - checkout
+      - run:
+          name: Install JDK 11
+          command: sudo apt-get update && sudo apt-get install openjdk-11-jdk -y
       - restore_cache:
           keys:
             # when lock file changes, use increasingly general patterns to restore cache
@@ -14,22 +17,25 @@ jobs:
             - maven-repo-rstreamer-
       - run:
           name: Fetching dependencies
-          command: mvn dependency:go-offline
+          command: JAVA_HOME=/usr/lib/jvm/java-11-openjdk-amd64/ ./mvnw dependency:go-offline
       - save_cache:
           paths:
             - ~/.m2
           key: maven-repo-rstreamer-{{ .Branch }}-{{ checksum "pom.xml" }}
       - run:
           name: Maven build & Sonar analysis
-          command: mvn verify -B sonar:sonar -Dsonar.projectKey=ikhoury_rstreamer -Dsonar.organization=ikhoury -Dsonar.host.url=https://sonarcloud.io
+          command: JAVA_HOME=/usr/lib/jvm/java-11-openjdk-amd64/ ./mvnw verify -B sonar:sonar -Dsonar.projectKey=ikhoury_rstreamer -Dsonar.organization=ikhoury -Dsonar.host.url=https://sonarcloud.io
       - store_test_results:
           path: target/surefire-reports
 
-  publish_artifact:
+  publish:
     machine:
       image: circleci/classic:latest
     steps:
       - checkout
+      - run:
+          name: Install JDK 11
+          command: sudo apt-get update && sudo apt-get install openjdk-11-jdk -y
       - restore_cache:
           keys:
             # when lock file changes, use increasingly general patterns to restore cache
@@ -37,21 +43,24 @@ jobs:
             - maven-repo-rstreamer-{{ .Branch }}-
             - maven-repo-rstreamer-
       - run:
+          name: Fetching dependencies
+          command: JAVA_HOME=/usr/lib/jvm/java-11-openjdk-amd64/ ./mvnw dependency:go-offline
+      - run:
           name: Import GPG Key
           command: echo -e "$GPG_KEY" | gpg --import
       - run:
           name: Create and publish artifact
-          command: mvn -B -s .circleci/settings.xml -P release -DskipTests deploy
+          command: JAVA_HOME=/usr/lib/jvm/java-11-openjdk-amd64/ ./mvnw -B -s .circleci/settings.xml -P release -DskipTests deploy
 
 workflows:
   main:
     jobs:
-      - commit_stage:
+      - build:
           context: SonarCloud
-      - publish_artifact:
+      - publish:
           context: Sonatype
           requires:
-            - commit_stage
+            - build
           filters:
             branches:
               only: master

@@ -6,7 +6,7 @@
 This library can be used to implement applications that need to process messages from redis queues.
 
 ## Setup
-Maven is used to build the project artefact. Run `mvn install` to have the artefact available in your local repostiory.
+The project is build using **maven** with **JDK 11**. Run `mvn install` to have the artefact available in your local repostiory.
 
 ## Concepts
 A `WorkSubscription` describes a group of interested message handlers that want to process items from a redis queue.
