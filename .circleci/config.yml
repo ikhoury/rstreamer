@@ -1,7 +1,7 @@
 version: 2.1
 
 jobs:
-  commit_stage:
+  build:
     machine:
       image: circleci/classic:latest
     steps:
@@ -25,7 +25,7 @@ jobs:
       - store_test_results:
           path: target/surefire-reports
 
-  publish_artifact:
+  publish:
     machine:
       image: circleci/classic:latest
     steps:
@@ -46,12 +46,12 @@ jobs:
 workflows:
   main:
     jobs:
-      - commit_stage:
+      - build:
           context: SonarCloud
-      - publish_artifact:
+      - publish:
           context: Sonatype
           requires:
-            - commit_stage
+            - build
           filters:
             branches:
               only: master
