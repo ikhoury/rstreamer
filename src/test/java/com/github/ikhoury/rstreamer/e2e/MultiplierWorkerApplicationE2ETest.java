@@ -23,7 +23,7 @@ public class MultiplierWorkerApplicationE2ETest {
     private static final int NUMBERS_TO_SEND = 5000;
 
     @Rule
-    public final GenericContainer redis = new GenericContainer<>("redis:5.0.5-alpine")
+    public final GenericContainer redis = new GenericContainer<>("redis:6.0.5-alpine")
             .withExposedPorts(6379);
 
     private MultiplierApplicationDriver applicationDriver;
