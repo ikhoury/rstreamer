@@ -4,7 +4,7 @@
 
     <groupId>com.github.ikhoury</groupId>
     <artifactId>rstreamer</artifactId>
-    <version>0.6.0-SNAPSHOT</version>
+    <version>0.6.0</version>
 
     <name>RStreamer</name>
     <description>
@@ -111,7 +111,7 @@
 
     <scm>
         <developerConnection>scm:git:ssh://git@github.com/ikhoury/rstreamer</developerConnection>
-        <tag>HEAD</tag>
+        <tag>v0.6.0</tag>
         <url>https://github.com/ikhoury/rstreamer</url>
     </scm>
 
