@@ -10,7 +10,7 @@ jobs:
           command: sudo apt-get update && sudo apt-get install openjdk-11-jdk -y
       - run:
           name: Set Java Home
-          command: export JAVA_HOME=/usr/lib/jvm/java-11-openjdk-amd64/
+          command: echo "JAVA_HOME=/usr/lib/jvm/java-11-openjdk-amd64/" >> sudo /etc/environment && source /etc/environment
       - checkout
       - restore_cache:
           keys:
@@ -40,7 +40,7 @@ jobs:
           command: sudo apt-get update && sudo apt-get install openjdk-11-jdk -y
       - run:
           name: Set Java Home
-          command: export JAVA_HOME=/usr/lib/jvm/java-11-openjdk-amd64/
+          command: echo "JAVA_HOME=/usr/lib/jvm/java-11-openjdk-amd64/" >> sudo /etc/environment && source /etc/environment
       - checkout
       - restore_cache:
           keys:
