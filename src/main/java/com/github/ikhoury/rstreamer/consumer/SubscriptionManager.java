@@ -15,6 +15,7 @@ import java.util.Collection;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 
+import static java.util.concurrent.CompletableFuture.allOf;
 import static java.util.concurrent.Executors.newFixedThreadPool;
 
 /**
@@ -56,11 +57,11 @@ public class SubscriptionManager {
 
     public void deactivateSubscriptions() {
         LOGGER.info("Deactivating {} subscriptions", subscriptions.size());
-        CompletableFuture[] deactivationTasks = subscriptionRunners.stream()
+        var deactivationTasks = subscriptionRunners.stream()
                 .map(subscriptionRunner -> CompletableFuture.runAsync(subscriptionRunner::stop))
                 .toArray(CompletableFuture[]::new);
 
-        CompletableFuture.allOf(deactivationTasks).join();
+        allOf(deactivationTasks).join();
     }
 
     private void activateSubscription(WorkSubscription subscription) {
