@@ -1,6 +1,5 @@
 package com.github.ikhoury.rstreamer.consumer;
 
-import com.github.ikhoury.rstreamer.lease.Lease;
 import com.github.ikhoury.rstreamer.lease.LeaseBroker;
 import com.github.ikhoury.rstreamer.lease.LeaseRunner;
 import com.github.ikhoury.rstreamer.worker.BatchWorker;
@@ -59,14 +58,14 @@ class SubscriptionRunner {
 
         @Override
         public void run() {
-            String queue = subscription.getQueue();
+            var queue = subscription.getQueue();
             LOGGER.debug("Running subscription for {}", queue);
 
             while (!Thread.interrupted()) {
-                List<String> items = routine.doPoll();
+                var items = routine.doPoll();
 
                 if (!items.isEmpty()) {
-                    Lease lease = leaseBroker.acquireLease();
+                    var lease = leaseBroker.acquireLease();
 
                     if (items.size() == 1) {
                         lease.setTask(() -> processSingleItem(items.get(0)));
@@ -75,13 +74,9 @@ class SubscriptionRunner {
                     }
 
                     leaseRunner.run(lease);
-                } else {
-                    try {
-                        TimeUnit.SECONDS.sleep(HOLD_BACK_SECONDS_ON_EMPTY_RESULT);
-                    } catch (InterruptedException e) {
-                        Thread.currentThread().interrupt();
-                    }
                 }
+
+                holdBack();
             }
 
             LOGGER.debug("Closed subscription for {}", queue);
@@ -104,6 +99,14 @@ class SubscriptionRunner {
                     items.forEach(worker::processSingleItem);
                 }
             });
+        }
+
+        private void holdBack() {
+            try {
+                TimeUnit.SECONDS.sleep(HOLD_BACK_SECONDS_ON_EMPTY_RESULT);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
         }
     }
 }
