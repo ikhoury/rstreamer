@@ -37,16 +37,16 @@ class PollingRoutine {
     List<String> doPoll() {
         if (shouldBatchPoll) {
             List<String> items = poller.pollForMultipleItemsFrom(workQueue, batchSize);
-            LOGGER.trace("Batch polled on {} for {} and got {}", workQueue, batchSize, items.size());
+            LOGGER.trace("Batch polled from {} for {} and got {}", workQueue, batchSize, items.size());
             shouldBatchPoll = shouldBatchPollBasedOnSizeOf(items);
             return items;
-        } else {
-            shouldBatchPoll = batchSize > 1 && shouldBatchPollBasedOnRandomOutcome();
-            LOGGER.trace("Single polling on {}", workQueue);
-            return poller.pollForSingleItemFrom(workQueue)
-                    .map(Collections::singletonList)
-                    .orElse(emptyList());
         }
+
+        shouldBatchPoll = shouldBatchPollBasedOnRandomOutcome();
+        LOGGER.trace("Single polling from {}", workQueue);
+        return poller.pollForSingleItemFrom(workQueue)
+                .map(Collections::singletonList)
+                .orElse(emptyList());
     }
 
     private boolean shouldBatchPollBasedOnSizeOf(List<String> items) {
@@ -54,6 +54,6 @@ class PollingRoutine {
     }
 
     private boolean shouldBatchPollBasedOnRandomOutcome() {
-        return randomBooleanOutcome();
+        return batchSize > 1 && randomBooleanOutcome();
     }
 }
