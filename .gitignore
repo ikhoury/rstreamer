@@ -105,6 +105,10 @@ dependency-reduced-pom.xml
 buildNumber.properties
 .mvn/timing.properties
 .mvn/wrapper/maven-wrapper.jar
+
 # Sonar
 .idea/sonarlint/*
+
+# AWS
+.idea/aws.xml
 
