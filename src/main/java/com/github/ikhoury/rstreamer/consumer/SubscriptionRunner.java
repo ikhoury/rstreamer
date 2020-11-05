@@ -23,28 +23,28 @@ class SubscriptionRunner {
     private final WorkSubscription subscription;
     private final LeaseBroker leaseBroker;
     private final LeaseRunner leaseRunner;
-    private final Thread nativeThread;
+    private final Thread pollingThread;
 
     SubscriptionRunner(WorkSubscription subscription, LeaseBroker leaseBroker, LeaseRunner leaseRunner, PollingRoutine routine) {
         this.leaseBroker = leaseBroker;
         this.leaseRunner = leaseRunner;
         this.subscription = subscription;
-        this.nativeThread = new Thread(new SubscriptionRunnerTask(routine));
+        this.pollingThread = new Thread(new SubscriptionRunnerTask(routine));
 
-        nativeThread.setName("SubscriptionRunner-" + nativeThread.getId());
+        pollingThread.setName("SubscriptionRunner-" + pollingThread.getId());
     }
 
     void start() {
-        this.nativeThread.start();
+        this.pollingThread.start();
     }
 
     void stop() {
-        this.nativeThread.interrupt();
+        this.pollingThread.interrupt();
         try {
-            this.nativeThread.join();
+            this.pollingThread.join();
             this.leaseRunner.shutdown();
         } catch (InterruptedException exc) {
-            LOGGER.error("{} was interrupted and failed to shutdown gracefully", nativeThread.getName(), exc);
+            LOGGER.error("{} was interrupted and failed to shutdown gracefully", pollingThread.getName(), exc);
             Thread.currentThread().interrupt();
         }
     }
