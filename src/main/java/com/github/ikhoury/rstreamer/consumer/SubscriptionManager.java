@@ -70,8 +70,9 @@ public class SubscriptionManager {
         LeaseBroker leaseBroker = new LeaseBroker(leaseConfig, queue);
         LeaseRunner leaseRunner = new LeaseRunner(leaseBroker, executorService, queue);
 
-        PollingRoutine routine = new PollingRoutine(pollingConfig, poller, queue);
-        SubscriptionRunner subscriptionRunner = new SubscriptionRunner(subscription, leaseBroker, leaseRunner, routine);
+        PollingRoutine pollingRoutine = new PollingRoutine(pollingConfig, poller, queue);
+        WorkRoutine workRoutine = new WorkRoutine(subscription.getWorkers(), leaseBroker, leaseRunner);
+        SubscriptionRunner subscriptionRunner = new SubscriptionRunner(subscription, leaseRunner, pollingRoutine, workRoutine);
         subscriptionRunner.start();
 
         subscriptionRunners.add(subscriptionRunner);
