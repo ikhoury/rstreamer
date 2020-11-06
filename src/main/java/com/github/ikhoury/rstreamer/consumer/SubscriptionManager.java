@@ -15,6 +15,7 @@ import java.util.Collection;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 
+import static java.util.concurrent.CompletableFuture.allOf;
 import static java.util.concurrent.Executors.newFixedThreadPool;
 
 /**
@@ -56,11 +57,11 @@ public class SubscriptionManager {
 
     public void deactivateSubscriptions() {
         LOGGER.info("Deactivating {} subscriptions", subscriptions.size());
-        CompletableFuture[] deactivationTasks = subscriptionRunners.stream()
+        var deactivationTasks = subscriptionRunners.stream()
                 .map(subscriptionRunner -> CompletableFuture.runAsync(subscriptionRunner::stop))
                 .toArray(CompletableFuture[]::new);
 
-        CompletableFuture.allOf(deactivationTasks).join();
+        allOf(deactivationTasks).join();
     }
 
     private void activateSubscription(WorkSubscription subscription) {
@@ -69,8 +70,9 @@ public class SubscriptionManager {
         LeaseBroker leaseBroker = new LeaseBroker(leaseConfig, queue);
         LeaseRunner leaseRunner = new LeaseRunner(leaseBroker, executorService, queue);
 
-        PollingRoutine routine = new PollingRoutine(pollingConfig, poller, queue);
-        SubscriptionRunner subscriptionRunner = new SubscriptionRunner(subscription, leaseBroker, leaseRunner, routine);
+        PollingRoutine pollingRoutine = new PollingRoutine(pollingConfig, poller, queue);
+        WorkRoutine workRoutine = new WorkRoutine(subscription.getWorkers(), leaseBroker, leaseRunner);
+        SubscriptionRunner subscriptionRunner = new SubscriptionRunner(subscription, leaseRunner, pollingRoutine, workRoutine);
         subscriptionRunner.start();
 
         subscriptionRunners.add(subscriptionRunner);

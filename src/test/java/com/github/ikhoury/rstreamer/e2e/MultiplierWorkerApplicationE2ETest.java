@@ -1,6 +1,5 @@
 package com.github.ikhoury.rstreamer.e2e;
 
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -9,6 +8,7 @@ import org.testcontainers.containers.GenericContainer;
 import java.util.Collections;
 import java.util.List;
 
+import static com.github.ikhoury.rstreamer.util.Container.REDIS;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasSize;
@@ -23,7 +23,7 @@ public class MultiplierWorkerApplicationE2ETest {
     private static final int NUMBERS_TO_SEND = 5000;
 
     @Rule
-    public final GenericContainer redis = new GenericContainer<>("redis:6.0.5-alpine")
+    public final GenericContainer redis = new GenericContainer<>(REDIS)
             .withExposedPorts(6379);
 
     private MultiplierApplicationDriver applicationDriver;
@@ -37,30 +37,29 @@ public class MultiplierWorkerApplicationE2ETest {
                 redis.getFirstMappedPort(),
                 MULTIPLIER_VALUE
         );
-
-        applicationDriver.start();
-    }
-
-    @After
-    public void tearDown() {
-        applicationDriver.stop();
     }
 
     @Test
     public void multipliesListOfNumbersSequential() {
+        applicationDriver.start();
+
         for (int i = 0; i < NUMBERS_TO_SEND; i++) {
             applicationDriver.sendNumber(i);
             assertThat(applicationDriver.removeFirstOutputNumber(), equalTo(i * MULTIPLIER_VALUE));
         }
+
+        applicationDriver.stop();
     }
 
     @Test
-    public void multiplesListOfNumbersParallel() throws InterruptedException {
+    public void multipliesListOfNumbersParallel() throws InterruptedException {
         for (int i = 0; i < NUMBERS_TO_SEND; i++) {
             applicationDriver.sendNumber(i);
         }
 
+        applicationDriver.start();
         applicationDriver.waitForInputToBeProcessed();
+        applicationDriver.stop();
 
         List<Integer> processedNumbers = applicationDriver.currentOutputNumbers();
         Collections.sort(processedNumbers);
