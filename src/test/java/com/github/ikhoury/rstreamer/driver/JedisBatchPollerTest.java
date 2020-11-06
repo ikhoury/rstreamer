@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static com.github.ikhoury.rstreamer.config.poller.BatchPollerConfigBuilder.defaultBatchPollerConfig;
+import static com.github.ikhoury.rstreamer.util.Container.REDIS;
 import static com.github.ikhoury.rstreamer.util.TimeInterval.SHORT_SECOND;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsInAnyOrder;
@@ -26,7 +27,7 @@ public class JedisBatchPollerTest {
     private static final int NUMBER_OF_MULTIPLE_ITEMS = MULTIPLE_ITEMS.length;
 
     @Rule
-    public final GenericContainer redis = new GenericContainer<>("redis:6.0.9-alpine")
+    public final GenericContainer redis = new GenericContainer<>(REDIS)
             .withExposedPorts(6379);
 
     private JedisBatchPoller poller;

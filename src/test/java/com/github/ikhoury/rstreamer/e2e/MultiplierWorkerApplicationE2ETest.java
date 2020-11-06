@@ -9,6 +9,7 @@ import org.testcontainers.containers.GenericContainer;
 import java.util.Collections;
 import java.util.List;
 
+import static com.github.ikhoury.rstreamer.util.Container.REDIS;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasSize;
@@ -23,7 +24,7 @@ public class MultiplierWorkerApplicationE2ETest {
     private static final int NUMBERS_TO_SEND = 5000;
 
     @Rule
-    public final GenericContainer redis = new GenericContainer<>("redis:6.0.5-alpine")
+    public final GenericContainer redis = new GenericContainer<>(REDIS)
             .withExposedPorts(6379);
 
     private MultiplierApplicationDriver applicationDriver;
