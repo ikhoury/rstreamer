@@ -1,6 +1,5 @@
 package com.github.ikhoury.rstreamer.e2e;
 
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -38,21 +37,18 @@ public class MultiplierWorkerApplicationE2ETest {
                 redis.getFirstMappedPort(),
                 MULTIPLIER_VALUE
         );
-
-        applicationDriver.start();
-    }
-
-    @After
-    public void tearDown() {
-        applicationDriver.stop();
     }
 
     @Test
     public void multipliesListOfNumbersSequential() {
+        applicationDriver.start();
+
         for (int i = 0; i < NUMBERS_TO_SEND; i++) {
             applicationDriver.sendNumber(i);
             assertThat(applicationDriver.removeFirstOutputNumber(), equalTo(i * MULTIPLIER_VALUE));
         }
+
+        applicationDriver.stop();
     }
 
     @Test
@@ -61,7 +57,9 @@ public class MultiplierWorkerApplicationE2ETest {
             applicationDriver.sendNumber(i);
         }
 
+        applicationDriver.start();
         applicationDriver.waitForInputToBeProcessed();
+        applicationDriver.stop();
 
         List<Integer> processedNumbers = applicationDriver.currentOutputNumbers();
         Collections.sort(processedNumbers);
