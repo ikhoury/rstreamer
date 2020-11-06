@@ -56,7 +56,7 @@ public class MultiplierWorkerApplicationE2ETest {
     }
 
     @Test
-    public void multiplesListOfNumbersParallel() throws InterruptedException {
+    public void multipliesListOfNumbersParallel() throws InterruptedException {
         for (int i = 0; i < NUMBERS_TO_SEND; i++) {
             applicationDriver.sendNumber(i);
         }
