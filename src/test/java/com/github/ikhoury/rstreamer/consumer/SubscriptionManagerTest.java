@@ -15,7 +15,6 @@ import java.util.Optional;
 import static com.github.ikhoury.rstreamer.config.subsription.SubscriptionManageConfigBuilder.defaultSubscriptionManagerConfig;
 import static com.github.ikhoury.rstreamer.util.TimeInterval.SHORT_MILLIS;
 import static java.util.Collections.singleton;
-import static java.util.Collections.singletonList;
 import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -37,7 +36,6 @@ public class SubscriptionManagerTest {
         WorkSubscription subscription = new WorkSubscription(QUEUE, singleton(worker));
 
         when(poller.pollForSingleItemFrom(QUEUE)).thenReturn(Optional.of(ITEM));
-        when(poller.pollForMultipleItemsFrom(eq(QUEUE), anyInt())).thenReturn(singletonList(ITEM));
 
         manager = new SubscriptionManager(config, poller);
         manager.addSubscription(subscription);
