@@ -43,7 +43,7 @@
 
         <jedis.version>3.5.1</jedis.version>
         <slf4j.version>1.7.30</slf4j.version>
-        <resilience4j.version>1.6.1</resilience4j.version>
+        <resilience4j.version>1.7.0</resilience4j.version>
 
         <junit.version>4.13.1</junit.version>
         <testcontainers.version>1.15.1</testcontainers.version>
