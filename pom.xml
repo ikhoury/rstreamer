@@ -42,7 +42,7 @@
         <nexus.staging.version>1.6.8</nexus.staging.version>
 
         <jedis.version>4.1.1</jedis.version>
-        <slf4j.version>1.7.35</slf4j.version>
+        <slf4j.version>1.7.36</slf4j.version>
         <resilience4j.version>1.7.1</resilience4j.version>
 
         <junit.version>4.13.2</junit.version>
