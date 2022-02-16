@@ -39,7 +39,7 @@
         <maven.gpg.version>3.0.1</maven.gpg.version>
         <jacoco.version>0.8.7</jacoco.version>
         <sonar.version>3.9.1.2184</sonar.version>
-        <nexus.staging.version>1.6.10</nexus.staging.version>
+        <nexus.staging.version>1.6.11</nexus.staging.version>
 
         <jedis.version>4.1.1</jedis.version>
         <slf4j.version>1.7.36</slf4j.version>
