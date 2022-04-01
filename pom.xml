@@ -41,7 +41,7 @@
         <sonar.version>3.9.1.2184</sonar.version>
         <nexus.staging.version>1.6.12</nexus.staging.version>
 
-        <jedis.version>4.2.0</jedis.version>
+        <jedis.version>4.2.1</jedis.version>
         <slf4j.version>1.7.36</slf4j.version>
         <resilience4j.version>1.7.1</resilience4j.version>
 
