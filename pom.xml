@@ -37,7 +37,7 @@
         <maven.source.version>3.2.1</maven.source.version>
         <maven.javadoc.version>3.3.2</maven.javadoc.version>
         <maven.gpg.version>3.0.1</maven.gpg.version>
-        <jacoco.version>0.8.7</jacoco.version>
+        <jacoco.version>0.8.8</jacoco.version>
         <sonar.version>3.9.1.2184</sonar.version>
         <nexus.staging.version>1.6.12</nexus.staging.version>
 
