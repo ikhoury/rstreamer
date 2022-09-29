@@ -6,6 +6,9 @@ jobs:
       - image: cimg/openjdk:18.0.2
     steps:
       - checkout
+      - setup_remote_docker:
+          version: 20.10.14
+          docker_layer_caching: true
       - restore_cache:
           keys:
             # when lock file changes, use increasingly general patterns to restore cache
