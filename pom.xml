@@ -46,7 +46,7 @@
         <resilience4j.version>1.7.1</resilience4j.version>
 
         <junit.version>4.13.2</junit.version>
-        <testcontainers.version>1.17.2</testcontainers.version>
+        <testcontainers.version>1.17.4</testcontainers.version>
         <mockito.version>4.6.0</mockito.version>
         <hamcrest.version>1.3</hamcrest.version>
     </properties>
