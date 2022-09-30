@@ -30,7 +30,7 @@ jobs:
 
   publish:
     machine:
-      image: circleci/classic:latest
+      image: ubuntu-2004:202010-01
     steps:
       - checkout
       - run:
